@@ -35,7 +35,7 @@ void removeEntity(struct entities *e,
                   int index) {
     destroyEntity(&e->list[index]);
     for (int i = index; i < e->len - 1; i++) {
-        e->list[index] = e->list[index + 1];
+        e->list[i] = e->list[i + 1];
     }
     e->len--;
 }
@@ -144,28 +144,55 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
             case ENEMY_2:
                 // TODO: Change me
                 break;
+            case PROJECTILE:
+                if (ent->velocity.x == 0 && ent->velocity.y == 0) {
+                    removeEntity(e, i);
+                    i--;
+                }
+                break;
+            case BOUNCING_PROJECTILE:
+                if (ent->entityData != NULL) {
+                    struct bouncingProjectileData *data = (struct bouncingProjectileData *) ent->entityData;
+
+                    // Bounce off of walls and map edges.
+                    if (ent->velocity.x == 0 && ent->velocity.y == 0) {
+                        data->bounces--;
+                        ent->velocity.x = -data->lastVelocity.x;
+                        ent->velocity.y = -data->lastVelocity.y;
+                        if (data->bounces <= 0) {
+                            removeEntity(e, i);
+                            i--;
+                            break;
+                        }
+                    }
+
+                    data->lastVelocity.x = ent->velocity.x;
+                    data->lastVelocity.y = ent->velocity.y;
+
+                    // Check if colliding with another entity
+                }
+                break;
         }
     }
 }
 
 void initEntity(struct entity *e,
-                char entityAsset[]) {
-    e->entityAsset = al_load_bitmap(entityAsset);
+                ALLEGRO_BITMAP *bitmap) {
+    e->entityAsset = bitmap;
     e->position.x = 0;
     e->position.y = 0;
     e->velocity.x = 0;
     e->velocity.y = 0;
     e->dimensions.x = 0;
     e->dimensions.y = 0;
-    e->health = 0;
     e->type = NONE;
     e->entityData = NULL;
 }
 
 void destroyEntity(struct entity* e) {
-    al_destroy_bitmap(e->entityAsset);
     if (e->entityData != NULL) {
         free(e->entityData);
+        e->entityData = NULL;
     }
 }
 
@@ -179,3 +206,18 @@ void drawEntity(struct entity* e) {
     al_draw_bitmap(e->entityAsset, e->position.x, e->position.y, flags);
 }
 
+bool isCollidingWith(struct entity* a, struct entity* b) {
+    bool xMatch = a->position.x >= b->position.x
+        && a->position.x + a->dimensions.x <= b->position.x + b->dimensions.x;
+    bool yMatch = a->position.y >= b->position.y
+        && a->position.y + a->dimensions.y <= b->position.y + b->dimensions.y;
+    return xMatch && yMatch;
+}
+
+void initBouncingProjectile(struct entity *e, int maxBounces) {
+    struct bouncingProjectileData *data = (struct bouncingProjectileData *) malloc(sizeof(struct bouncingProjectileData));
+    data->lastVelocity = e->velocity;
+    data->bounces = maxBounces;
+    e->entityData = data;
+    e->type = BOUNCING_PROJECTILE;
+}

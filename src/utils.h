@@ -13,6 +13,7 @@
 #endif
 
 #define TOWER_SIZE 100
+#define BALL_SIZE 30
 
 struct vect2 {
     double x, y;

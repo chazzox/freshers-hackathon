@@ -48,7 +48,11 @@ int main() {
 
     // Init plugins
     al_init_image_addon();
-    // __INIT__BITMAPS__
+    __TEST= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/test.png");
+__BACKGROUND_COLLISIONS= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background_collisions.png");
+__BACKGROUND= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background.png");
+__BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
+
 
     // Init game
     struct entities ents;
@@ -189,7 +193,7 @@ int main() {
     }
 
     // Clean up
-    // __FREE__BITMAPS__
+    al_destroy_bitmap(TEST);al_destroy_bitmap(BACKGROUND_COLLISIONS);al_destroy_bitmap(BACKGROUND);al_destroy_bitmap(BALL);
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
 
