@@ -22,21 +22,21 @@ int main() {
 	timer = al_create_timer(1.0 / FPS);
 	if (!timer) {
 		fprintf(stderr, "Failed to create timer.\n");
-		return 1;
+		return 2;
 	}
 
 	// Create the display
-	display = al_create_display(640, 480);
+	display = al_create_display(RES_X, RES_Y);
 	if (!display) {
 		fprintf(stderr, "Failed to create display.\n");
-		return 1;
+		return 3;
 	}
 
 	// Create the event queue
 	event_queue = al_create_event_queue();
 	if (!event_queue) {
 		fprintf(stderr, "Failed to create event queue.");
-		return 1;
+		return 4;
 	}
 
 	// Register event sources

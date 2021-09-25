@@ -5,7 +5,7 @@ project(CursedRTS_Hackathon)
 set(REPO_URL "https://github.com/chazzox/freshers-hackathon")
 
 # compiler flags
-set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -Wno-writable-strings -DDEBUG=1")
+set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -Wno-writable-strings -DDEBUG=1 -DRES_X=1920 -DRES_Y=1080")
 # -fsanitize=address,undefined ???
 set(CMAKE_C_FLAGS_RELEASE "-O2 -Wall -pthread -Wno-unused-parameter -Wno-writable-strings -DDEBUG=0")
 
