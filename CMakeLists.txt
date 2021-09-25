@@ -11,9 +11,9 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # compiler flags
-set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -Wno-writable-strings -DDEBUG=1 -DRES_X=1920 -DRES_Y=1080")
+set(CMAKE_C_FLAGS_DEBUG "-DALLEGRO_UNSTABLE -DTOUCH=0 -g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -Wno-writable-strings -DDEBUG=1 -DRES_X=1920 -DRES_Y=1080")
 # -fsanitize=address,undefined ???
-set(CMAKE_C_FLAGS_RELEASE "-O2 -Wall -pthread -Wno-unused-parameter -Wno-writable-strings -DDEBUG=0")
+set(CMAKE_C_FLAGS_RELEASE "-DALLEGRO_UNSTABLE -DTOUCH=1 -O2 -Wall -pthread -Wno-unused-parameter -Wno-writable-strings -DDEBUG=0")
 
 # run the preprocessing python file
 set(PRE_PY "${CMAKE_SOURCE_DIR}/preprocessing.py")

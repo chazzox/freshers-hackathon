@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define ALLEGRO_UNSTABLE
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 
@@ -36,17 +35,17 @@ int main() {
         return 3;
     }
 
-	// Install Mouse drivers
+    // Install Mouse drivers
     if(!al_install_mouse()){
-    fprintf(stderr, "Failed to install Mouse");
-    return 9;
+        fprintf(stderr, "Failed to install Mouse");
+        return 9;
     }
 
-	// Install Touch Driver
-	if(!al_install_touch_input()){
-	  fprintf(stderr, "Failed to install touch");
-	  return 10;
-	}
+    // Install Touch Driver
+    if(!al_install_touch_input()){
+        fprintf(stderr, "Failed to install touch");
+        return 10;
+    }
 
     // Create the event queue
     event_queue = al_create_event_queue();
@@ -104,7 +103,6 @@ int main() {
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
-
 	al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
 	al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
 
@@ -134,7 +132,7 @@ int main() {
         // Handle the event
         if (get_event) {
             switch (event.type) {
-                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                     towerSummonTmp.position.x = event.mouse.x;
                     towerSummonTmp.position.y = event.mouse.y;
 
@@ -151,8 +149,9 @@ int main() {
                         clickSummon_real->dimensions.x = TOWER_SIZE;
                         clickSummon_real->dimensions.y = TOWER_SIZE;
 
-                        printf("Created an entity.\n");
+                        printf("Created a test tower entity.\n");
                     }
+
                     printf("Click event.\n");
                     break;
                 case ALLEGRO_EVENT_TIMER:
@@ -167,7 +166,7 @@ int main() {
                     break;
                 case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
                 case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     break;
                 default:

@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+
 #include "mapwalls.h"
 #include "entity.h"
 #include "utils.h"
@@ -33,11 +35,19 @@ int main() {
         return 3;
     }
 
-    // Create the Mouse Event Source
+    // Install Mouse drivers
     if(!al_install_mouse()){
-    fprintf(stderr, "Failed to install Mouse");
-    return 9;
+        fprintf(stderr, "Failed to install Mouse");
+        return 9;
     }
+
+#if TOUCH
+    // Install Touch Driver
+    if(!al_install_touch_input()){
+        fprintf(stderr, "Failed to install touch");
+        return 10;
+    }
+#endif
 
     // Create the event queue
     event_queue = al_create_event_queue();
@@ -74,7 +84,7 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
         mike->dimensions.y = 100;
     }*/
 
-    ///* // GENERATE RANDOM BALLS FOR TESTING
+    /* // GENERATE RANDOM BALLS FOR TESTING
     srand(time(NULL));
 
     for (int i = 0; i < 10000; i++) {
@@ -89,7 +99,7 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
 
         ball->dimensions.x = BALL_SIZE;
         ball->dimensions.y = BALL_SIZE;
-    }//*/
+    }*/
 
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
@@ -99,6 +109,10 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
+#if TOUCH
+	al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
+	al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
+#endif
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -126,7 +140,7 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
         // Handle the event
         if (get_event) {
             switch (event.type) {
-                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                     towerSummonTmp.position.x = event.mouse.x;
                     towerSummonTmp.position.y = event.mouse.y;
 
@@ -143,8 +157,9 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
                         clickSummon_real->dimensions.x = TOWER_SIZE;
                         clickSummon_real->dimensions.y = TOWER_SIZE;
 
-                        printf("Created an entity.\n");
+                        printf("Created a test tower entity.\n");
                     }
+
                     printf("Click event.\n");
                     break;
                 case ALLEGRO_EVENT_TIMER:
@@ -159,7 +174,7 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
                     break;
                 case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
                 case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     break;
                 default:

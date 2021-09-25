@@ -67,6 +67,7 @@ bool isFullyInWall(struct entity *ent, struct mapWalls *walls) {
         if (!walls->wallArr[(int) ceil(ent->position.x)][y]) return false;
         if (!walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][y]) return false;
     }
+
     return true;
 }
 
@@ -86,7 +87,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                lastY = y;
 
         for (double l = 0; l < ceil(vmag); l++) {
-            // Calculate the x, y of the caycast for l pixels away from position
+            // Calculate the x, y of the raycast for l pixels away from position
             x = ceil(ent->position.x) + vm.x * l;
             y = ceil(ent->position.y) + vm.y * l;
 
@@ -132,6 +133,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
         drawEntity(ent);
     }
 
+    // Run custom logic for each entity
     for (int i = 0; i < e->len; i++) {
         struct entity *ent = &e->list[i];
         // Run the entity logic
@@ -145,7 +147,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                 // TODO: Change me
                 break;
             case PROJECTILE:
-                if (ent->velocity.x == 0 && ent->velocity.y == 0) {
+                if (ent->health == 0) {
                     removeEntity(e, i);
                     i--;
                 }
@@ -157,8 +159,12 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                     // Bounce off of walls and map edges.
                     if (ent->velocity.x == 0 && ent->velocity.y == 0) {
                         data->bounces--;
-                        ent->velocity.x = -data->lastVelocity.x;
-                        ent->velocity.y = -data->lastVelocity.y;
+                        data->lastVelocity.x *= -1;
+                        data->lastVelocity.y *= -1;
+
+                        ent->velocity.x = data->lastVelocity.x;
+                        ent->velocity.y = data->lastVelocity.y;
+
                         if (data->bounces <= 0) {
                             removeEntity(e, i);
                             i--;
@@ -166,14 +172,17 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                         }
                     }
 
-                    data->lastVelocity.x = ent->velocity.x;
-                    data->lastVelocity.y = ent->velocity.y;
+                    if (ent->velocity.x != 0 && ent->velocity.y != 0) {
+                        data->lastVelocity.x = ent->velocity.x;
+                        data->lastVelocity.y = ent->velocity.y;
+                    }
 
-                    // Check if colliding with another entity
+                    // TODO: Check if colliding with another entity
                 }
                 break;
         }
     }
+
 }
 
 void initEntity(struct entity *e,
