@@ -4,6 +4,12 @@ cmake_minimum_required(VERSION 3.12)
 project(CursedRTS_Hackathon)
 set(REPO_URL "https://github.com/chazzox/freshers-hackathon")
 
+# Link Homebrew Dir if platform macos
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+	link_directories("/opt/homebrew/lib")
+	include_directories("/opt/homebrew/include")
+endif()
+
 # compiler flags
 set(CMAKE_C_FLAGS_DEBUG "-g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -Wno-writable-strings -DDEBUG=1 -DRES_X=1920 -DRES_Y=1080")
 # -fsanitize=address,undefined ???
