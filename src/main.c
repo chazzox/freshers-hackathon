@@ -100,6 +100,10 @@ int main() {
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
                     break;
+				case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
+				case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
+					fprintf(stderr, "Display Switch Event\n");
+					break;
                 default:
                     fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
