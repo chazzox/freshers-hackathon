@@ -6,24 +6,30 @@ import re
 thisDir = os.path.dirname(os.path.abspath(__file__))
 sourcePath = os.path.join(thisDir, "src")
 
-ASSETS = "{thisDir}/assets"
+ASSETS = f"{thisDir}/assets"
 IMAGES = f"{ASSETS}/images"
-DEF_RE = re.compile("[a-zA-Z0-9_-]", re.I)
-
 ASSETS_OUT = f"{sourcePath}/assets.h"
 
+print("Started preprocesser.py")
+print(f" - Current dir is {thisDir}")
+print(f" - Source dir is {sourcePath}")
+print(f" - Assets are in {ASSETS}")
+print(f" - Images are in {IMAGES}")
+
 def toDefine(filename):
-    filename = filename.splti("/")[-1::]
-    name = []
-    [name.append(g) for g in DEF_RE.search(filename)]
-    return "".join(name).upper()
+    filename = filename[len(filename) - 1][0].upper().replace(".PNG", "")
+    name = ""
+    for c in filename:
+        if c in "0123456789ABCDEFGHJIKLMNOPQRSTUVWXYZ_-":
+            name += c
+    return name
 
 f = open(ASSETS_OUT, "w")
 f.write("#pragma once\n")
 for file in os.walk(IMAGES):
     define = toDefine(file)
     print(f"Defined {define}")
-    f.write(f"#define \"{thisDir}/{define}\"\n")
+    f.write(f"#define {define} \"{IMAGES}/{file[len(file) - 1][0]}\"\n")
 
 
 f.close()

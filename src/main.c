@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <allegro5/allegro.h>
+#include <allegro5/allegro_image.h>
 #include "utils.h"
+#include "assets.h"
 
 // This always runs headless and contextless
 int main() {
-    int i = 0;
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER *timer = NULL;
+    ALLEGRO_BITMAP *backgroundBitMap = NULL;
 
     bool running = true;
 
@@ -38,6 +40,10 @@ int main() {
         fprintf(stderr, "Failed to create event queue.");
         return 4;
     }
+
+    // Init plugins
+    al_init_image_addon();
+    backgroundBitMap = al_load_bitmap(BACKGROUND);
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -80,15 +86,17 @@ int main() {
         // Check if we need to redraw
         if (redraw && al_is_event_queue_empty(event_queue)) {
             // Draw the frame
-            al_clear_to_color(al_map_rgb(i % 256, i % 256, i % 256));
-            al_flip_display();
+            // Draw the background
+            al_draw_bitmap(backgroundBitMap, 0, 0, 0);
 
-            i++;
+            // flip display
+            al_flip_display();
             redraw = false;
         }
     }
 
     // Clean up
+    al_destroy_bitmap(backgroundBitMap);
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
 
