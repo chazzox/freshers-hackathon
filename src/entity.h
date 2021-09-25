@@ -2,6 +2,8 @@
 #include "utils.h"
 #include <allegro5/bitmap.h>
 
+#include <stdbool.h>
+
 #define ENTITY_LIST_BLOCK_LENGTH 4096
 
 enum entityType {
@@ -31,3 +33,4 @@ struct entity {
 void initEntity(struct entity *e, char entityAsset[]);
 void destroyEntity(struct entity *e);
 void drawEntity(struct entity *e);
+bool isInWall(struct entity *e, struct mapWalls *walls);
