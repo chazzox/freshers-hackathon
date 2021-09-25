@@ -78,7 +78,8 @@ int main() {
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
-    al_register_event_source(event_queue, al_get_timer_event_source(timer));	al_register_event_source(event_queue, al_get_mouse_event_source());	
+    al_register_event_source(event_queue, al_get_timer_event_source(timer));
+    al_register_event_source(event_queue, al_get_mouse_event_source());
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
