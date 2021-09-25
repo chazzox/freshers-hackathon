@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#define ALLEGRO_UNSTABLE
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+
 #include "mapwalls.h"
 #include "entity.h"
 #include "utils.h"
@@ -33,11 +36,17 @@ int main() {
         return 3;
     }
 
-    // Create the Mouse Event Source
+	// Install Mouse drivers
     if(!al_install_mouse()){
     fprintf(stderr, "Failed to install Mouse");
     return 9;
     }
+
+	// Install Touch Driver
+	if(!al_install_touch_input()){
+	  fprintf(stderr, "Failed to install touch");
+	  return 10;
+	}
 
     // Create the event queue
     event_queue = al_create_event_queue();
@@ -95,6 +104,9 @@ int main() {
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
+
+	al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
+	al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
