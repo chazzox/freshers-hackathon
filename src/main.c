@@ -43,9 +43,9 @@ int main() {
     }
 
 	// Install Touch Driver
-	if(!al_install_touch_input()){
+	al_install_touch_input()
+	if(!al_is_touch_input_installed()){
 	  fprintf(stderr, "Failed to install touch");
-	  return 10;
 	}
 
     // Create the event queue
@@ -87,7 +87,8 @@ int main() {
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
-
+	
+	// Touch inputs will register as mouse events
 	al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
 	al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
 
@@ -148,14 +149,14 @@ int main() {
                 case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
                     fprintf(stderr, "Display Switch Event\n");
                     break;
+				// Events that we dont care about
                 case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
                 case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     break;
                 default:
-                    // no
-                    //fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                    fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
             }
         }
