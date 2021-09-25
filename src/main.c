@@ -51,7 +51,7 @@ int main() {
     #if DEBUG
     srand(time(NULL));
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 100; i++) {
         struct entity *mike = addEntity(&ents);
         initEntity(mike, TEST);
         mike->velocity.x = rand() % 10;
@@ -59,6 +59,9 @@ int main() {
 
         mike->position.x = abs(rand() % RES_X);
         mike->position.y = abs(rand() % RES_Y);
+
+        mike->dimensions.x = 100;
+        mike->dimensions.y = 100;
     }
 
     #endif
@@ -114,6 +117,14 @@ int main() {
 
             // Draw all entites
             runEntityLogic(&ents, mapWalls);
+
+            /* //DEBUG FOR TESTING COLLISION MAP
+            for (int x = 0; x < RES_X; x++) {
+                for (int y = 0; y < RES_Y; y++) {
+                    if (mapWalls->wallArr[x][y]) al_draw_pixel(x, y, al_map_rgb(0, 0, 255));
+                }
+            }
+            */
 
             // flip display
             al_flip_display();

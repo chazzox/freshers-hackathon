@@ -75,7 +75,7 @@ struct mapWalls *initMapWalls(char imageName []) {
 
     for (unsigned int x = 0; x < png.width && x < RES_X; x++) {
         for (unsigned int y = 0; y < png.height && y < RES_Y; y++) {
-            map->wallArr[x][y] = data[x + y * png.width] != 0;
+            map->wallArr[x][y] = (data[x + y * png.width] & 0xFFFFFF) != 0;
         }
     }
 

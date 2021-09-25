@@ -75,23 +75,49 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                 break;
             }
 
-            if (x >= RES_X) {
-                x = RES_X - 1;
+            if (x + ent->dimensions.x >= RES_X) {
+                x = RES_X - 1 - ent->dimensions.x;
                 SET_VELO_ZERO
                 break;
             }
 
-            if (y >+ RES_Y) {
-                y = RES_Y - 1;
+            if (y + ent->dimensions.y >= RES_Y) {
+                y = RES_Y - 1 - ent->dimensions.y;
                 SET_VELO_ZERO
                 break;
             }
 
             // If there is a collision stop the entity and move it back
-            if (walls->wallArr[(int) ceil(x)][(int) ceil(y)]) {
-                x = lastX;
-                y = lastY;
-                break;
+            for (int xx = x; xx < ceil(x + ent->dimensions.x); xx++) {
+                // check top of hitbox
+                if (walls->wallArr[(int) ceil(xx)][(int) ceil(y)]) {
+                    x = lastX;
+                    y = lastY;
+                    SET_VELO_ZERO
+                    break;
+                }
+                // check bottom of hitbox
+                if (walls->wallArr[(int) ceil(xx)][(int) ceil(y + ent->dimensions.y)]) {
+                    x = lastX;
+                    y = lastY;
+                    SET_VELO_ZERO
+                    break;
+                }
+            }
+
+            for (int yy = x; yy < ceil(x + ent->dimensions.y); yy++) {
+                // check top of hitbox
+                if (walls->wallArr[(int) ceil(x + ent->dimensions.x)][(int) ceil(yy)]) {
+                    x = lastX;
+                    y = lastY;
+                    break;
+                }
+                // check bottom of hitbox
+                if (walls->wallArr[(int) ceil(x + ent->dimensions.x)][(int) ceil(yy)]) {
+                    x = lastX;
+                    y = lastY;
+                    break;
+                }
             }
 
             lastX = x;
@@ -112,6 +138,8 @@ void initEntity(struct entity *e,
     e->position.y = 0;
     e->velocity.x = 0;
     e->velocity.y = 0;
+    e->dimensions.x = 0;
+    e->dimensions.y = 0;
     e->health = 0;
     e->type = BASE;
     e->entityData = NULL;

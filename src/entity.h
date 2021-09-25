@@ -22,7 +22,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls);
 
 struct entity {
     ALLEGRO_BITMAP *entityAsset;
-    struct vect2 position, velocity;
+    struct vect2 position, velocity, dimensions;
     int health;
     enum entityType type;
     void *entityData;
