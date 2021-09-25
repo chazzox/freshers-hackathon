@@ -136,7 +136,7 @@ int main() {
         // Handle the event
         if (get_event) {
             switch (event.type) {
-                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                     towerSummonTmp.position.x = event.mouse.x;
                     towerSummonTmp.position.y = event.mouse.y;
 
