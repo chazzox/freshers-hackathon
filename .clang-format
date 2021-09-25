@@ -6,6 +6,6 @@ BraceWrapping:
   SplitEmptyFunction: false
 AlignAfterOpenBracket: true
 ColumnLimit: 100
-AllowShortFunctionsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: true
 AllowShortEnumsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
