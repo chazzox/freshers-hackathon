@@ -22,5 +22,5 @@ set(SRC_FILES
     )
 
 add_executable(CursedRTS_Hackathon ${SRC_FILES} ${MAIN})
-target_link_libraries(CursedRTS_Hackathon png z pthread)
+target_link_libraries(CursedRTS_Hackathon png z pthread allegro allegro_main allegro_image allegro_primitives allegro_color allegro_font allegro_ttf allegro_audio)
 add_dependencies(CursedRTS_Hackathon prepy)

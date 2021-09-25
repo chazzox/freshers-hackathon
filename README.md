@@ -9,5 +9,13 @@ We have a modded manjaro ISO that launches the program on launch. This works rea
 Install community/allegro *(manjaro package)* then run the executable.
 
 ```bash
-sudo pacman -S yay; sudo pacman -S allegro; ./rts
+sudo pacman -Sy; sudo pacman -S allegro; ./rts
 ```
+### Compiling
+#### Requirements
+ - libpng
+ - zlib
+ - allegro
+ - pthread
+#### To compile
+Use cmake or run `comp.sh` which has the commands to setup cmake, compile and run.
