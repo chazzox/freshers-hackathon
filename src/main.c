@@ -51,6 +51,7 @@ int main() {
 	al_start_timer(timer);
 
 	// Game loop
+    bool redraw = true;
 	while (running) {
 		ALLEGRO_EVENT event;
 		ALLEGRO_TIMEOUT timeout;
@@ -64,6 +65,9 @@ int main() {
 		// Handle the event
 		if (get_event) {
 			switch (event.type) {
+				case ALLEGRO_EVENT_TIMER:
+                    redraw = true;
+                    break;
 				case ALLEGRO_EVENT_DISPLAY_CLOSE:
 					running = false;
 					break;
@@ -74,11 +78,12 @@ int main() {
 		}
 
 		// Check if we need to redraw
-		if (al_is_event_queue_empty(event_queue)) {
+		if (redraw && al_is_event_queue_empty(event_queue)) {
 			// Redraw
 			al_clear_to_color(al_map_rgb(i % 256, i % 256, i % 256));
 			al_flip_display();
             i++;
+            redraw = false;
 		}
 	}
 
