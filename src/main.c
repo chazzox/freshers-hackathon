@@ -38,13 +38,12 @@ int main() {
 
 	// Install Mouse drivers
     if(!al_install_mouse()){
-    fprintf(stderr, "Failed to install Mouse");
-    return 9;
+    	fprintf(stderr, "Failed to install Mouse");
+   		return 9;
     }
 
 	// Install Touch Driver
-	al_install_touch_input()
-	if(!al_is_touch_input_installed()){
+	if(!al_install_touch_input()){
 	  fprintf(stderr, "Failed to install touch");
 	}
 
@@ -89,8 +88,10 @@ int main() {
     al_register_event_source(event_queue, al_get_mouse_event_source());
 	
 	// Touch inputs will register as mouse events
-	al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
-	al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
+	if(al_is_touch_input_installed()){
+		al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
+		al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
+	}
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
