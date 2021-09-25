@@ -179,6 +179,11 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
 
                     // TODO: Check if colliding with another entity
                 }
+
+                if (ent->health == 0) {
+                    removeEntity(e, i);
+                    i--;
+                }
                 break;
         }
     }

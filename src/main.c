@@ -44,7 +44,6 @@ int main() {
     // Install Touch Driver
     if(!al_install_touch_input()){
         fprintf(stderr, "Failed to install touch");
-        return 10;
     }
 
     // Create the event queue
@@ -195,8 +194,8 @@ int main() {
                 for (int y = 0; y < RES_Y; y++) {
                     if (mapWalls->wallArr[x][y]) al_draw_pixel(x, y, al_map_rgb(0, 0, 255));
                 }
-            }
-            */
+            }*/
+
 
             // flip display
             al_flip_display();

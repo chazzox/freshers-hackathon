@@ -41,13 +41,10 @@ int main() {
         return 9;
     }
 
-#if TOUCH
     // Install Touch Driver
     if(!al_install_touch_input()){
         fprintf(stderr, "Failed to install touch");
-        return 10;
     }
-#endif
 
     // Create the event queue
     event_queue = al_create_event_queue();
@@ -84,7 +81,7 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
         mike->dimensions.y = 100;
     }*/
 
-    /* // GENERATE RANDOM BALLS FOR TESTING
+    ///* // GENERATE RANDOM BALLS FOR TESTING
     srand(time(NULL));
 
     for (int i = 0; i < 10000; i++) {
@@ -99,7 +96,7 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
 
         ball->dimensions.x = BALL_SIZE;
         ball->dimensions.y = BALL_SIZE;
-    }*/
+    }//*/
 
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
@@ -109,10 +106,12 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
-#if TOUCH
-	al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
-	al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
-#endif
+	
+	// Touch inputs will register as mouse events
+	if(al_is_touch_input_installed()){
+		al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
+		al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
+	}
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -140,7 +139,7 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
         // Handle the event
         if (get_event) {
             switch (event.type) {
-                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                     towerSummonTmp.position.x = event.mouse.x;
                     towerSummonTmp.position.y = event.mouse.y;
 
@@ -172,14 +171,15 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
                 case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
                     fprintf(stderr, "Display Switch Event\n");
                     break;
+				// Events that we dont care about
                 case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
                 case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+				case ALLEGRO_EVENT_MOUSE_WARPED:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     break;
                 default:
-                    // no
-                    //fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                    fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
             }
         }
@@ -198,8 +198,8 @@ __BALL= al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
                 for (int y = 0; y < RES_Y; y++) {
                     if (mapWalls->wallArr[x][y]) al_draw_pixel(x, y, al_map_rgb(0, 0, 255));
                 }
-            }
-            */
+            }*/
+
 
             // flip display
             al_flip_display();
