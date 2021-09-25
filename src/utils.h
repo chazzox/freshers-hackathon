@@ -11,3 +11,12 @@
 #ifndef FPS
 #define FPS 60
 #endif
+
+struct vect2 {
+    double x, y;
+};
+
+double sqr(double a);
+double getDist(struct vect2 a, struct vect2 b);
+double mag(struct vect2 a);
+struct vect2 normalise(struct vect2 a);

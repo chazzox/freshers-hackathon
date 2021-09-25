@@ -10,9 +10,6 @@ int main() {
     ALLEGRO_DISPLAY *display = NULL;
     ALLEGRO_EVENT_QUEUE *event_queue = NULL;
     ALLEGRO_TIMER *timer = NULL;
-    ALLEGRO_BITMAP *backgroundBitMap = NULL;
-
-    bool running = true;
 
     // Initialize allegro
     if (!al_init()) {
@@ -43,7 +40,7 @@ int main() {
 
     // Init plugins
     al_init_image_addon();
-    backgroundBitMap = al_load_bitmap(BACKGROUND);
+    ALLEGRO_BITMAP *backgroundBitMap = al_load_bitmap(BACKGROUND);
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -57,6 +54,7 @@ int main() {
     al_start_timer(timer);
 
     // Game loop
+    bool running = true;
     bool redraw = true;
     while (running) {
         ALLEGRO_EVENT event;
