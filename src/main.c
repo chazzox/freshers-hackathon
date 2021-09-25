@@ -48,7 +48,7 @@ int main() {
     struct entities ents;
     initEntities(&ents);
 
-    #if DEBUG
+    /* // GENERATE RANDOM ENTITES FOR TESTING
     srand(time(NULL));
 
     for (int i = 0; i < 100; i++) {
@@ -63,8 +63,7 @@ int main() {
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
     }
-
-    #endif
+    */
 
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(BACKGROUND_COLLISIONS);
@@ -103,10 +102,10 @@ int main() {
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
                     break;
-				case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
-				case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
-					fprintf(stderr, "Display Switch Event\n");
-					break;
+                case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
+                case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
+                    fprintf(stderr, "Display Switch Event\n");
+                    break;
                 default:
                     fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
