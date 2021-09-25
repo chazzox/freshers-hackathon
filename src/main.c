@@ -101,9 +101,25 @@ int main() {
         // Fetch the event (if one exists)
         bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
 
+        struct entity *clickSummon_real;
+        struct entity clickSummon;
+
         // Handle the event
         if (get_event) {
             switch (event.type) {
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                    clickSummon.position.x = event.mouse.x;
+                    clickSummon.position.y = event.mouse.y;
+                    clickSummon.dimensions.x = 100;
+                    clickSummon.dimensions.y = 100;
+
+                    if (isFullyInWall(&clickSummon, mapWalls)) {
+                        clickSummon_real = addEntity(&ents);
+                        initEntity(&clickSummon, TEST);
+                        clickSummon.position.x = 100;
+                        clickSummon.position.y = 100;
+                    }
+                    break;
                 case ALLEGRO_EVENT_TIMER:
                     redraw = true;
                     break;
@@ -123,7 +139,8 @@ int main() {
 				case ALLEGRO_EVENT_MOUSE_AXES:
 				  	break;
                 default:
-                    fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                    // no
+                    //fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
             }
         }

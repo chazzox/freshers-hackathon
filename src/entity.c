@@ -43,6 +43,58 @@ void removeEntity(struct entities *e,
     e->len--;
 }
 
+bool isPartiallyInWall(struct entity *ent, struct mapWalls *walls) {
+    // If there is a collision stop the entity and move it back
+    for (int xx = ent->position.x; xx < ceil(ent->position.x + ent->dimensions.x); xx++) {
+        // check top of hitbox
+        if (walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y)]) {
+            return true;
+        }
+        // check bottom of hitbox
+        if (walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y + ent->dimensions.y)]) {
+            return true;
+        }
+    }
+
+    for (int yy = ent->position.x; yy < ceil(ent->position.x + ent->dimensions.y); yy++) {
+        // check top of hitbox
+        if (walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
+            return true;
+        }
+        // check bottom of hitbox
+        if (walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool isFullyInWall(struct entity *ent, struct mapWalls *walls) {
+    // If there is a collision stop the entity and move it back
+    for (int xx = ent->position.x; xx < ceil(ent->position.x + ent->dimensions.x); xx++) {
+        // check top of hitbox
+        if (!walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y)]) {
+            return false;
+        }
+        // check bottom of hitbox
+        if (!walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y + ent->dimensions.y)]) {
+            return false;
+        }
+    }
+
+    for (int yy = ent->position.x; yy < ceil(ent->position.x + ent->dimensions.y); yy++) {
+        // check top of hitbox
+        if (!walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
+            return false;
+        }
+        // check bottom of hitbox
+        if (!walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 #define SET_VELO_ZERO ent->velocity.x = 0;ent->velocity.y = 0;
 void runEntityLogic(struct entities *e, struct mapWalls *walls) {
     for (int i = 0; i < e->len; i++) {
@@ -87,22 +139,11 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                 break;
             }
 
-            // If there is a collision stop the entity and move it back
-            for (int xx = x; xx < ceil(x + ent->dimensions.x); xx++) {
-                // check top of hitbox
-                if (walls->wallArr[(int) ceil(xx)][(int) ceil(y)]) {
-                    x = lastX;
-                    y = lastY;
-                    SET_VELO_ZERO
-                    break;
-                }
-                // check bottom of hitbox
-                if (walls->wallArr[(int) ceil(xx)][(int) ceil(y + ent->dimensions.y)]) {
-                    x = lastX;
-                    y = lastY;
-                    SET_VELO_ZERO
-                    break;
-                }
+            // If in a wall move back and stop
+            if (isPartiallyInWall(ent, walls)) {
+                x = lastX;
+                y = lastY;
+                SET_VELO_ZERO
             }
 
             for (int yy = x; yy < ceil(x + ent->dimensions.y); yy++) {
