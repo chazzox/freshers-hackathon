@@ -51,7 +51,7 @@ int main() {
     #if DEBUG
     srand(time(NULL));
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         struct entity *mike = addEntity(&ents);
         initEntity(mike, TEST);
         mike->velocity.x = rand() % 10;
@@ -60,6 +60,7 @@ int main() {
         mike->position.x = abs(rand() % RES_X);
         mike->position.y = abs(rand() % RES_Y);
     }
+
     #endif
 
     printf("Loading collision boxes...\n");
