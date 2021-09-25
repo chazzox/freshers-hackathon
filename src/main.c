@@ -44,6 +44,12 @@ int main() {
     al_init_image_addon();
     ALLEGRO_BITMAP *backgroundBitMap = al_load_bitmap(BACKGROUND);
 
+    // Init game
+    struct entities ents;
+    initEntities(&ents);
+
+    struct mapWalls *mapWalls = initMapWalls(BACKGROUND_COLLISIONS);
+
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
@@ -99,6 +105,10 @@ int main() {
     al_destroy_bitmap(backgroundBitMap);
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
+
+    // Clean up game
+    destroyEntities(&ents);
+    free(mapWalls);
 
     return 0;
 }

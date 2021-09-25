@@ -21,7 +21,7 @@ struct PNG {
     int bytes_pp;
 };
 
-struct mapWalls initMapWalls(char imageName []) {
+struct mapWalls *initMapWalls(char imageName []) {
     // open the file
     FILE *inputFile = fopen(imageName, "rb");
 
@@ -69,20 +69,20 @@ struct mapWalls initMapWalls(char imageName []) {
     }
 
     // create map walls
-    struct mapWalls map;
+    struct mapWalls *map = malloc(sizeof(struct mapWalls));
     // init to false
-    memset(&map, 0, sizeof(map));
+    memset(map, 0, sizeof(struct mapWalls));
 
-    for (unsigned int x = 0; x < png.width; x++) {
-        for (unsigned int y = 0; y < png.height; y++) {
-            map.wallArr[x][y] = data[x + y * png.width] != 0;
+    for (unsigned int x = 0; x < png.width && x < RES_X; x++) {
+        for (unsigned int y = 0; y < png.height && y < RES_Y; y++) {
+            map->wallArr[x][y] = data[x + y * png.width] != 0;
         }
     }
 
     // free resources
     free(data);
 
-    //Free png rows
+    // Free png rows
     for (unsigned int y = 0; y < png.height; y++) {
         png_free (png.png_ptr, png.rows[y]);
     }

@@ -17,7 +17,7 @@ print(f" - Assets are in {ASSETS}")
 print(f" - Images are in {IMAGES}")
 
 def toDefine(filename):
-    filename = filename[len(filename) - 1][0].upper().replace(".PNG", "")
+    filename = filename.upper().replace(".PNG", "")
     name = ""
     for c in filename:
         if c in "0123456789ABCDEFGHJIKLMNOPQRSTUVWXYZ_-":
@@ -26,10 +26,9 @@ def toDefine(filename):
 
 f = open(ASSETS_OUT, "w")
 f.write("#pragma once\n")
-for file in os.walk(IMAGES):
+for file in os.listdir(IMAGES):
     define = toDefine(file)
     print(f"Defined {define}")
-    f.write(f"#define {define} \"{IMAGES}/{file[len(file) - 1][0]}\"\n")
-
+    f.write(f"#define {define} \"{IMAGES}/{file}\"\n")
 
 f.close()
