@@ -25,6 +25,8 @@ set(MAIN
     )
 set(SRC_FILES
     src/utils.c
+    src/entity.c
+    src/mapwalls.c
     )
 
 add_executable(CursedRTS_Hackathon ${SRC_FILES} ${MAIN})

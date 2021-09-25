@@ -18,7 +18,7 @@ void initEntities(struct entities *e);
 void destroyEntities(struct entities *e);
 struct entity *addEntity(struct entities *entities);
 void removeEntity(struct entities *e, int index);
-void runEntityLogic(struct entities *e);
+void runEntityLogic(struct entities *e, struct mapWalls *walls);
 
 struct entity {
     ALLEGRO_BITMAP *entityAsset;

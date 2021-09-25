@@ -59,7 +59,8 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
 
             // If there is a collision stop the entity and
             if (walls->wallArr[x][y]) {
-                ent->velocity = {0, 0};
+                ent->velocity.x = 0;
+                ent->velocity.y = 0;
                 x = lastX;
                 y = lastY;
                 break;
@@ -69,15 +70,18 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
             lastY = y;
         }
 
-        ent->position = {x, y};
+        ent->position.x = x;
+        ent->position.y = y;;
     }
 }
 
 void initEntity(struct entity *e,
                 char entityAsset[]) {
     e->entityAsset = al_load_bitmap(entityAsset);
-    e->position = {0, 0};
-    e->entityAsset = {0, 0};
+    e->position.x = 0;
+    e->position.y = 0;
+    e->velocity.x = 0;
+    e->velocity.y = 0;
     e->health = 0;
     e->type = BASE;
     e->entityData = NULL;

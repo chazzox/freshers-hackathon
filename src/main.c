@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
+#include "mapwalls.h"
+#include "entity.h"
 #include "utils.h"
 #include "assets.h"
 
