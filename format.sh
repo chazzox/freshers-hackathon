@@ -4,3 +4,5 @@ for FILE in */**; do
 		clang-format -i $FILE
 	fi
 done
+echo "$(git diff --name-only)"
+
