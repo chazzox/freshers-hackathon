@@ -22,12 +22,8 @@ void destroyEntities(struct entities *e) {
 }
 
 struct entity *addEntity(struct entities *e) {
-    if (e->len + 1 >= e-> arrMaxLen) {
-        void *new = realloc(e->list, sizeof(struct entity) * (e->arrMaxLen + ENTITY_LIST_BLOCK_LENGTH));
-        if (new != e->list) {
-            memcpy(new, e->list, sizeof(struct entity) * e->arrMaxLen);
-        }
-
+    if (e->len >= e-> arrMaxLen) {
+        e->list = realloc(e->list, sizeof(struct entity) * (e->arrMaxLen + ENTITY_LIST_BLOCK_LENGTH));
         e->arrMaxLen += ENTITY_LIST_BLOCK_LENGTH;
     }
 
@@ -76,6 +72,7 @@ bool isFullyInWall(struct entity *ent, struct mapWalls *walls) {
 
 #define SET_VELO_ZERO ent->velocity.x = 0;ent->velocity.y = 0;
 void runEntityLogic(struct entities *e, struct mapWalls *walls) {
+    // Move the entity
     for (int i = 0; i < e->len; i++) {
         struct entity *ent = &e->list[i];
 
@@ -134,6 +131,21 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
 
         drawEntity(ent);
     }
+
+    for (int i = 0; i < e->len; i++) {
+        struct entity *ent = &e->list[i];
+        // Run the entity logic
+        switch (ent->type) {
+            case NONE:
+            case BASE:
+                break;
+            case TOWER:
+            case ENEMY_1:
+            case ENEMY_2:
+                // TODO: Change me
+                break;
+        }
+    }
 }
 
 void initEntity(struct entity *e,
@@ -146,7 +158,7 @@ void initEntity(struct entity *e,
     e->dimensions.x = 0;
     e->dimensions.y = 0;
     e->health = 0;
-    e->type = BASE;
+    e->type = NONE;
     e->entityData = NULL;
 }
 
