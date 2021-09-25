@@ -12,6 +12,8 @@
 #define FPS 60
 #endif
 
+#define TOWER_SIZE 100
+
 struct vect2 {
     double x, y;
 };

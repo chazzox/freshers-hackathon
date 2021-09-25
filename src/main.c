@@ -33,11 +33,11 @@ int main() {
         return 3;
     }
 
-	// Create the Mouse Event Source
-	if(!al_install_mouse()){
-	  fprintf(stderr, "Failed to install Mouse");
-	  return 9;
-	}	
+    // Create the Mouse Event Source
+    if(!al_install_mouse()){
+    fprintf(stderr, "Failed to install Mouse");
+    return 9;
+    }
 
     // Create the event queue
     event_queue = al_create_event_queue();
@@ -54,7 +54,7 @@ int main() {
     struct entities ents;
     initEntities(&ents);
 
-    /* // GENERATE RANDOM ENTITES FOR TESTING
+    /* // GENERATE RANODM ENTITIES FOR TESTING
     srand(time(NULL));
 
     for (int i = 0; i < 100; i++) {
@@ -68,8 +68,7 @@ int main() {
 
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
-    }
-    */
+    }*/
 
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(BACKGROUND_COLLISIONS);
@@ -77,7 +76,8 @@ int main() {
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
-    al_register_event_source(event_queue, al_get_timer_event_source(timer));	al_register_event_source(event_queue, al_get_mouse_event_source());	
+    al_register_event_source(event_queue, al_get_timer_event_source(timer));
+    al_register_event_source(event_queue, al_get_mouse_event_source());
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -99,36 +99,51 @@ int main() {
         // Fetch the event (if one exists)
         bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
 
+        struct entity *clickSummon_real;
+        struct entity towerSummonTmp;
+
         // Handle the event
         if (get_event) {
             switch (event.type) {
+                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+                    towerSummonTmp.position.x = event.mouse.x;
+                    towerSummonTmp.position.y = event.mouse.y;
+
+                    towerSummonTmp.dimensions.x = TOWER_SIZE;
+                    towerSummonTmp.dimensions.y = TOWER_SIZE;
+
+                    if (isFullyInWall(&towerSummonTmp, mapWalls)) {
+                        clickSummon_real = addEntity(&ents);
+                        initEntity(clickSummon_real, TEST);
+
+                        clickSummon_real->position.x = event.mouse.x;
+                        clickSummon_real->position.y = event.mouse.y;
+
+                        clickSummon_real->dimensions.x = TOWER_SIZE;
+                        clickSummon_real->dimensions.y = TOWER_SIZE;
+
+                        printf("Created an entity.\n");
+                    }
+                    printf("Click event.\n");
+                    break;
                 case ALLEGRO_EVENT_TIMER:
                     redraw = true;
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
                     break;
-<<<<<<< HEAD
-				case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
-				case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
-					fprintf(stderr, "Display Switch Event\n");
-					break;
-				case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-					fprintf(stderr, "mouse button up\n");
-					break;
-				case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
-				case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-				case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-				case ALLEGRO_EVENT_MOUSE_AXES:
-				  	break;
-=======
                 case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
                 case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
                     fprintf(stderr, "Display Switch Event\n");
                     break;
->>>>>>> b16b98d485f59790339673471c15c4fb34b8160f
+                case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
+                case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                case ALLEGRO_EVENT_MOUSE_AXES:
+                    break;
                 default:
-                    fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                    // no
+                    //fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
             }
         }

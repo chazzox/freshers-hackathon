@@ -33,4 +33,5 @@ struct entity {
 void initEntity(struct entity *e, char entityAsset[]);
 void destroyEntity(struct entity *e);
 void drawEntity(struct entity *e);
-bool isInWall(struct entity *e, struct mapWalls *walls);
+bool isPartiallyInWall(struct entity *e, struct mapWalls *walls);
+bool isFullyInWall(struct entity *ent, struct mapWalls *walls);
