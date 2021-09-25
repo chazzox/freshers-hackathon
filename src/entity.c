@@ -2,6 +2,7 @@
 #include <allegro5/allegro.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <math.h>
 #include "mapwalls.h"
 #include "entity.h"
@@ -44,53 +45,31 @@ void removeEntity(struct entities *e,
 }
 
 bool isPartiallyInWall(struct entity *ent, struct mapWalls *walls) {
-    // If there is a collision stop the entity and move it back
-    for (int xx = ent->position.x; xx < ceil(ent->position.x + ent->dimensions.x); xx++) {
-        // check top of hitbox
-        if (walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y)]) {
-            return true;
-        }
-        // check bottom of hitbox
-        if (walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y + ent->dimensions.y)]) {
-            return true;
-        }
+    for (int x = ceil(ent->position.x); x < ceil(ent->position.x + ent->dimensions.x); x++) {
+        // check top/bottom of hitbox
+        if (walls->wallArr[x][(int) ceil(ent->position.y)]) return true;
+        if (walls->wallArr[x][(int) ceil(ent->position.y + ent->dimensions.y)]) return true;
     }
 
-    for (int yy = ent->position.x; yy < ceil(ent->position.x + ent->dimensions.y); yy++) {
-        // check top of hitbox
-        if (walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
-            return true;
-        }
-        // check bottom of hitbox
-        if (walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
-            return true;
-        }
+    for (int y = ceil(ent->position.y); y < ceil(ent->position.y + ent->dimensions.y); y++) {
+        // check sides of hitbox
+        if (walls->wallArr[(int) ceil(ent->position.x)][y]) return true;
+        if (walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][y]) return true;
     }
     return false;
 }
 
 bool isFullyInWall(struct entity *ent, struct mapWalls *walls) {
-    // If there is a collision stop the entity and move it back
-    for (int xx = ent->position.x; xx < ceil(ent->position.x + ent->dimensions.x); xx++) {
-        // check top of hitbox
-        if (!walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y)]) {
-            return false;
-        }
-        // check bottom of hitbox
-        if (!walls->wallArr[(int) ceil(xx)][(int) ceil(ent->position.y + ent->dimensions.y)]) {
-            return false;
-        }
+    for (int x = ceil(ent->position.x); x < ceil(ent->position.x + ent->dimensions.x); x++) {
+        // check tops/bottom of hitbox
+        if (!walls->wallArr[x][(int) ceil(ent->position.y)]) return false;
+        if (!walls->wallArr[x][(int) ceil(ent->position.y + ent->dimensions.y)]) return false;
     }
 
-    for (int yy = ent->position.x; yy < ceil(ent->position.x + ent->dimensions.y); yy++) {
-        // check top of hitbox
-        if (!walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
-            return false;
-        }
-        // check bottom of hitbox
-        if (!walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][(int) ceil(yy)]) {
-            return false;
-        }
+    for (int y = ceil(ent->position.y); y < ceil(ent->position.y + ent->dimensions.y); y++) {
+        // check sides of hitbox
+        if (!walls->wallArr[(int) ceil(ent->position.x)][y]) return false;
+        if (!walls->wallArr[(int) ceil(ent->position.x + ent->dimensions.x)][y]) return false;
     }
     return true;
 }

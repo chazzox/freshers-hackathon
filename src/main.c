@@ -33,11 +33,11 @@ int main() {
         return 3;
     }
 
-	// Create the Mouse Event Source
-	if(!al_install_mouse()){
-	  fprintf(stderr, "Failed to install Mouse");
-	  return 9;
-	}	
+    // Create the Mouse Event Source
+    if(!al_install_mouse()){
+    fprintf(stderr, "Failed to install Mouse");
+    return 9;
+    }
 
     // Create the event queue
     event_queue = al_create_event_queue();
@@ -54,7 +54,7 @@ int main() {
     struct entities ents;
     initEntities(&ents);
 
-    #if DEBUG
+    /* // GENERATE RANODM ENTITIES FOR TESTING
     srand(time(NULL));
 
     for (int i = 0; i < 100; i++) {
@@ -68,9 +68,7 @@ int main() {
 
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
-    }
-
-    #endif
+    }*/
 
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(BACKGROUND_COLLISIONS);
@@ -102,23 +100,31 @@ int main() {
         bool get_event = al_wait_for_event_until(event_queue, &event, &timeout);
 
         struct entity *clickSummon_real;
-        struct entity clickSummon;
+        struct entity towerSummonTmp;
 
         // Handle the event
         if (get_event) {
             switch (event.type) {
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-                    clickSummon.position.x = event.mouse.x;
-                    clickSummon.position.y = event.mouse.y;
-                    clickSummon.dimensions.x = 100;
-                    clickSummon.dimensions.y = 100;
+                    towerSummonTmp.position.x = event.mouse.x;
+                    towerSummonTmp.position.y = event.mouse.y;
 
-                    if (isFullyInWall(&clickSummon, mapWalls)) {
+                    towerSummonTmp.dimensions.x = TOWER_SIZE;
+                    towerSummonTmp.dimensions.y = TOWER_SIZE;
+
+                    if (isFullyInWall(&towerSummonTmp, mapWalls)) {
                         clickSummon_real = addEntity(&ents);
-                        initEntity(&clickSummon, TEST);
-                        clickSummon.position.x = 100;
-                        clickSummon.position.y = 100;
+                        initEntity(clickSummon_real, TEST);
+
+                        clickSummon_real->position.x = event.mouse.x;
+                        clickSummon_real->position.y = event.mouse.y;
+
+                        clickSummon_real->dimensions.x = TOWER_SIZE;
+                        clickSummon_real->dimensions.y = TOWER_SIZE;
+
+                        printf("Created an entity.\n");
                     }
+                    printf("Click event.\n");
                     break;
                 case ALLEGRO_EVENT_TIMER:
                     redraw = true;
@@ -126,18 +132,15 @@ int main() {
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
                     break;
-				case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
-				case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
-					fprintf(stderr, "Display Switch Event\n");
-					break;
-				case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
-					fprintf(stderr, "mouse button up\n");
-					break;
-				case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
-				case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-				case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
-				case ALLEGRO_EVENT_MOUSE_AXES:
-				  	break;
+                case ALLEGRO_EVENT_DISPLAY_SWITCH_OUT:
+                case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
+                    fprintf(stderr, "Display Switch Event\n");
+                    break;
+                case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
+                case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
+                case ALLEGRO_EVENT_MOUSE_AXES:
+                    break;
                 default:
                     // no
                     //fprintf(stderr, "Unsupported event received: %d\n", event.type);
