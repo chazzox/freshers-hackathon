@@ -1,3 +1,4 @@
+#pragma once
 
 #ifndef RES_X
 #define RES_X 3840

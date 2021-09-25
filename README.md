@@ -1,4 +1,4 @@
-# HACKATHON
+# FRESHERS HACKATHON 2021
 ## RTS for the big touch screen in Shilling
 ### Technology
  - Cmake

@@ -1,4 +1,4 @@
 [Project]
-CreatedFrom=
-Manager=KDevGenericManager
+CreatedFrom=CMakeLists.txt
+Manager=KDevCMakeManager
 Name=freshers-hackathon
