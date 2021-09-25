@@ -48,7 +48,23 @@ int main() {
     struct entities ents;
     initEntities(&ents);
 
+    #if DEBUG
+    srand(time(NULL));
+
+    for (int i = 0; i < 100; i++) {
+        struct entity *mike = addEntity(&ents);
+        initEntity(mike, TEST);
+        mike->velocity.x = rand() % 10;
+        mike->velocity.y = rand() % 10;
+
+        mike->position.x = abs(rand() % RES_X);
+        mike->position.y = abs(rand() % RES_Y);
+    }
+    #endif
+
+    printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(BACKGROUND_COLLISIONS);
+    printf("Loaded collision boxes.\n");
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -94,6 +110,9 @@ int main() {
             // Draw the frame
             // Draw the background
             al_draw_bitmap(backgroundBitMap, 0, 0, 0);
+
+            // Draw all entites
+            runEntityLogic(&ents, mapWalls);
 
             // flip display
             al_flip_display();

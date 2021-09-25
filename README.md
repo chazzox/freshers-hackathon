@@ -24,3 +24,7 @@ sudo pacman -Sy; sudo pacman -S allegro; ./rts
 
 #### To compile
 Use cmake or run `comp.sh` which has the commands to setup cmake, compile and run.
+
+## Assets
+### BACKGROUND
+This is the background image and background_collisions is a map of the hitboxes. Non-black pixels are walls.

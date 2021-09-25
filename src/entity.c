@@ -43,24 +43,49 @@ void removeEntity(struct entities *e,
     e->len--;
 }
 
+#define SET_VELO_ZERO ent->velocity.x = 0;ent->velocity.y = 0;
 void runEntityLogic(struct entities *e, struct mapWalls *walls) {
     for (int i = 0; i < e->len; i++) {
         struct entity *ent = &e->list[i];
 
         // See how far the entity can move before collision
         struct vect2 /*velocityNormalised*/ vm = normalise(ent->velocity);
+        double vmag = mag(ent->velocity);
 
-        int x = ceil(ent->position.x + ent->velocity.x);
-        int y = ceil(ent->position.y + ent->velocity.y);
+        double x = ceil(ent->position.x + ent->velocity.x),
+               y = ceil(ent->position.y + ent->velocity.y),
+               lastX = x,
+               lastY = y;
 
-        for (int l = 0, lastX = x, lastY = y; l < ceil(mag(ent->velocity)); l++) {
+        for (double l = 0; l < ceil(vmag); l++) {
             x = ceil(ent->position.x) + vm.x * l;
             y = ceil(ent->position.y) + vm.y * l;
 
+            if (x < 0) {
+                x = 0;
+                SET_VELO_ZERO
+                break;
+            }
+            if (y < 0) {
+                y = 0;
+                SET_VELO_ZERO
+                break;
+            }
+
+            if (x >= RES_X) {
+                x = RES_X - 1;
+                SET_VELO_ZERO
+                break;
+            }
+            if (y >+ RES_Y) {
+                y = RES_Y - 1;
+                SET_VELO_ZERO
+                break;
+            }
+
             // If there is a collision stop the entity and
-            if (walls->wallArr[x][y]) {
-                ent->velocity.x = 0;
-                ent->velocity.y = 0;
+            if (walls->wallArr[(int) ceil(x)][(int) ceil(y)]) {
+                SET_VELO_ZERO
                 x = lastX;
                 y = lastY;
                 break;
@@ -71,7 +96,10 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
         }
 
         ent->position.x = x;
-        ent->position.y = y;;
+        ent->position.y = y;
+        printf("%d %d\n", ent->position.x, ent->position.y);
+
+        drawEntity(ent);
     }
 }
 
