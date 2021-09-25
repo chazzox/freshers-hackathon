@@ -103,8 +103,12 @@ int main() {
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
-	al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
-	al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
+	
+	// Touch inputs will register as mouse events
+	if(al_is_touch_input_installed()){
+		al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
+		al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
+	}
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -164,14 +168,15 @@ int main() {
                 case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
                     fprintf(stderr, "Display Switch Event\n");
                     break;
+				// Events that we dont care about
                 case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
                 case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-                case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
+				case ALLEGRO_EVENT_MOUSE_WARPED:
+                case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     break;
                 default:
-                    // no
-                    //fprintf(stderr, "Unsupported event received: %d\n", event.type);
+                    fprintf(stderr, "Unsupported event received: %d\n", event.type);
                     break;
             }
         }
