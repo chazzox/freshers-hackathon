@@ -1,4 +1,0 @@
-/home/danny/freshers-hackathon/bin/CMakeFiles/rebuild_cache.dir
-/home/danny/freshers-hackathon/bin/CMakeFiles/edit_cache.dir
-/home/danny/freshers-hackathon/bin/CMakeFiles/CursedRTS_Hackathon.dir
-/home/danny/freshers-hackathon/bin/CMakeFiles/prepy.dir

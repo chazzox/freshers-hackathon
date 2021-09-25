@@ -1,1 +1,0 @@
-/usr/bin/cc -g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -Wno-writable-strings -DDEBUG=1 CMakeFiles/CursedRTS_Hackathon.dir/src/utils.c.o CMakeFiles/CursedRTS_Hackathon.dir/src/main.c.o -o CursedRTS_Hackathon  -lpng -lz -lpthread 
