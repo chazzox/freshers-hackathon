@@ -58,14 +58,17 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                lastY = y;
 
         for (double l = 0; l < ceil(vmag); l++) {
+            // Calculate the x, y of the caycast for l pixels away from position
             x = ceil(ent->position.x) + vm.x * l;
             y = ceil(ent->position.y) + vm.y * l;
 
+            // Check that I do not leave the map
             if (x < 0) {
                 x = 0;
                 SET_VELO_ZERO
                 break;
             }
+
             if (y < 0) {
                 y = 0;
                 SET_VELO_ZERO
@@ -77,15 +80,15 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                 SET_VELO_ZERO
                 break;
             }
+
             if (y >+ RES_Y) {
                 y = RES_Y - 1;
                 SET_VELO_ZERO
                 break;
             }
 
-            // If there is a collision stop the entity and
+            // If there is a collision stop the entity and move it back
             if (walls->wallArr[(int) ceil(x)][(int) ceil(y)]) {
-                SET_VELO_ZERO
                 x = lastX;
                 y = lastY;
                 break;
@@ -97,7 +100,6 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
 
         ent->position.x = x;
         ent->position.y = y;
-        printf("%d %d\n", ent->position.x, ent->position.y);
 
         drawEntity(ent);
     }
@@ -129,6 +131,6 @@ void drawEntity(struct entity* e) {
     if (e->velocity.y < 0)
         flags |= ALLEGRO_FLIP_VERTICAL;
 
-    al_draw_bitmap(e->entityAsset, 0, 0, flags);
+    al_draw_bitmap(e->entityAsset, e->position.x, e->position.y, flags);
 }
 
