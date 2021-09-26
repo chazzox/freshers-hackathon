@@ -1,0 +1,12 @@
+IndentWidth: 4
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterEnum: false
+  AfterStruct: false
+  SplitEmptyFunction: false
+AlignAfterOpenBracket: true
+ColumnLimit: 100
+AllowShortFunctionsOnASingleLine: true
+AllowShortEnumsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+SortIncludes: false
