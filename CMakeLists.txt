@@ -11,9 +11,9 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # compiler flags
-set(CMAKE_C_FLAGS_DEBUG "-DALLEGRO_UNSTABLE -DTOUCH=0 -g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -Wno-writable-strings -DDEBUG=1 -DRES_X=1920 -DRES_Y=1080")
+set(CMAKE_C_FLAGS_DEBUG "-DALLEGRO_UNSTABLE -DTOUCH=0 -g -O0 -Wall -pthread -Wextra -Wno-unused-parameter -DDEBUG=1 -DRES_X=1920 -DRES_Y=1080")
 # -fsanitize=address,undefined ???
-set(CMAKE_C_FLAGS_RELEASE "-DALLEGRO_UNSTABLE -DTOUCH=1 -O2 -Wall -pthread -Wno-unused-parameter -Wno-writable-strings -DDEBUG=0")
+set(CMAKE_C_FLAGS_RELEASE "-DALLEGRO_UNSTABLE -DTOUCH=1 -O2 -Wall -pthread -Wno-unused-parameter -DDEBUG=0")
 
 # run the preprocessing python file
 set(PRE_PY "${CMAKE_SOURCE_DIR}/preprocessing.py")
@@ -21,12 +21,13 @@ add_custom_target(prepy ${PRE_PY})
 
 # src
 set(MAIN
-    src/main.c
+    src/main2.c
     )
 set(SRC_FILES
     src/utils.c
     src/entity.c
     src/mapwalls.c
+    src/gamestate.c
     )
 
 add_executable(FreshersTD_Hackathon ${SRC_FILES} ${MAIN})

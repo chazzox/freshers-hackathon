@@ -11,7 +11,16 @@
 #include "utils.h"
 #include "assets.h"
 
-__EXTERN__ASSET__DEFS__()
+ALLEGRO_BITMAP *__BACKGROUND_COLLISIONS = NULL;
+ALLEGRO_BITMAP *__BACKGROUND = NULL;
+ALLEGRO_BITMAP *__COMPSOC_COIN = NULL;
+ALLEGRO_BITMAP *__BALL = NULL;
+ALLEGRO_BITMAP *__TEST = NULL;
+ALLEGRO_FONT *__HACK_ITALIC = NULL;
+ALLEGRO_FONT *__HACK_BOLD = NULL;
+ALLEGRO_FONT *__HACK_BOLDITALIC = NULL;
+ALLEGRO_FONT *__HACK_REGULAR = NULL;
+
 
 // This always runs headless and contextless
 int main() {
@@ -60,7 +69,16 @@ int main() {
     // Init plugins
     al_init_ttf_addon();
     al_init_image_addon();
-    __INIT__ASSETS__();
+    __BACKGROUND_COLLISIONS = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background_collisions.png");
+__BACKGROUND = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background.png");
+__COMPSOC_COIN = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/compsoc_coin.png");
+__BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
+__TEST = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/test.png");
+__HACK_ITALIC = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Italic.ttf", 250, ALLEGRO_TTF_NO_KERNING);
+__HACK_BOLD = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Bold.ttf", 250, ALLEGRO_TTF_NO_KERNING);
+__HACK_BOLDITALIC = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_BoldItalic.ttf", 250, ALLEGRO_TTF_NO_KERNING);
+__HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Regular.ttf", 250, ALLEGRO_TTF_NO_KERNING);
+;
 
     // Init game
     struct gameState state;
@@ -195,7 +213,16 @@ int main() {
     }
 
     // Clean up
-    __FREE__ASSETS__();
+    al_destroy_bitmap(BACKGROUND_COLLISIONS);
+al_destroy_bitmap(BACKGROUND);
+al_destroy_bitmap(COMPSOC_COIN);
+al_destroy_bitmap(BALL);
+al_destroy_bitmap(TEST);
+al_destroy_font(HACK_ITALIC);
+al_destroy_font(HACK_BOLD);
+al_destroy_font(HACK_BOLDITALIC);
+al_destroy_font(HACK_REGULAR);
+;
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
 
