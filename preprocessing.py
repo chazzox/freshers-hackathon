@@ -29,6 +29,8 @@ assetsFile = open(ASSETS_OUT, "w")
 assetsFile.write("#pragma once\n")
 assetsFile.write("#include <allegro5/allegro.h>\n")
 assetsFile.write("#include <allegro5/allegro_image.h>\n")
+assetsFile.write("#include <allegro5/allegro_ttf.h>\n")
+
 
 externInit = ""
 initAssets = ""

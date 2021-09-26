@@ -20,3 +20,26 @@ struct vect2 normalise(struct vect2 a) {
     struct vect2 out = {a.x / m, a.y / m};
     return out;
 }
+
+
+struct vect2 dotProduct(struct vect2 a, struct vect2 b){
+    a.x *= b.x;
+    a.y *= b.y;
+    return a;
+}
+
+double getAngleBetween(struct vect2 a, struct vect2 b) {
+    return acos(mag(dotProduct(a,b)) / (mag(a) * mag(b)));
+}
+
+struct vect2 minus(struct vect2 a, struct vect2 b) {
+    b.x -= a.x;
+    b.y -= a.y;
+    return b;
+}
+
+struct vect2 plus(struct vect2 a, struct vect2 b) {
+    a.x += b.x;
+    a.y += b.y;
+    return a;
+}

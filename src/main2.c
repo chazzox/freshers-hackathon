@@ -158,12 +158,10 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
                     if (isFullyInWall(&towerSummonTmp, mapWalls)) {
                         clickSummon_real = addEntity(&ents);
                         initEntity(clickSummon_real, TEST);
+                        initTower(clickSummon_real);
 
                         clickSummon_real->position.x = event.mouse.x;
                         clickSummon_real->position.y = event.mouse.y;
-                        
-                        clickSummon_real->dimensions.x = TOWER_SIZE;
-                        clickSummon_real->dimensions.y = TOWER_SIZE;
 
                         printf("Created a test tower entity.\n");
                     }

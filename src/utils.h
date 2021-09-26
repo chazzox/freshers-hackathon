@@ -12,9 +12,8 @@
 #define FPS 60
 #endif
 
-#define TOWER_RANGE_LONG 1000
-#define TOWER_RANGE_MEDIUM 750
-#define TOWER_RANGE_SHORT 500
+#define FIRE_RATE 1
+#define TOWER_RANGE 1000
 #define TOWER_SIZE 100
 #define BALL_SIZE 30
 
@@ -32,3 +31,7 @@ double sqr(double a);
 double getDist(struct vect2 a, struct vect2 b);
 double mag(struct vect2 a);
 struct vect2 normalise(struct vect2 a);
+struct vect2 dotProduct(struct vect2 a, struct vect2 b);
+struct vect2 minus(struct vect2 a, struct vect2 b);
+struct vect2 plus(struct vect2 a, struct vect2 b);
+double getAngleBetween(struct vect2 a, struct vect2 b);
