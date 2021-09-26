@@ -13,17 +13,35 @@
 
 ALLEGRO_BITMAP *__BACKGROUND_COLLISIONS = NULL;
 ALLEGRO_BITMAP *__BACKGROUND = NULL;
+ALLEGRO_BITMAP *__BASE_TOWER = NULL;
 ALLEGRO_BITMAP *__VOID_BALL = NULL;
+ALLEGRO_BITMAP *__PLAYER_BASE = NULL;
 ALLEGRO_BITMAP *__COMPSOC_COIN = NULL;
 ALLEGRO_BITMAP *__ENEMY_1 = NULL;
 ALLEGRO_BITMAP *__GOO = NULL;
+ALLEGRO_BITMAP *__GAME_END = NULL;
 ALLEGRO_BITMAP *__PLASMA_BALL = NULL;
 ALLEGRO_BITMAP *__TEST = NULL;
 ALLEGRO_FONT *__HACK_ITALIC = NULL;
 ALLEGRO_FONT *__HACK_BOLD = NULL;
 ALLEGRO_FONT *__HACK_BOLDITALIC = NULL;
 ALLEGRO_FONT *__HACK_REGULAR = NULL;
+;
 
+void spawnEnemy(struct entities *ents) {
+    struct entity *enemy = addEntity(ents);
+    initEntity(enemy, ENEMY_1);
+    enemy->type = ENEMY;
+    enemy->health = 100;
+    enemy->velocity.x = rand() % 10;
+    enemy->velocity.y = rand() % 10;
+    
+    enemy->position.x = 510;//abs(rand() % RES_X);
+    enemy->position.y = 669;//abs(rand() % RES_Y);
+    
+    enemy->dimensions.x = ENEMY_SIZE;
+    enemy->dimensions.y = ENEMY_SIZE;
+}
 
 // This always runs headless and contextless
 int main() {
@@ -74,10 +92,13 @@ int main() {
     al_init_image_addon();
     __BACKGROUND_COLLISIONS = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background_collisions.png");
 __BACKGROUND = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background.png");
+__BASE_TOWER = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/base_tower.png");
 __VOID_BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/void_ball.png");
+__PLAYER_BASE = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/player_base.png");
 __COMPSOC_COIN = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/compsoc_coin.png");
 __ENEMY_1 = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/enemy_1.png");
 __GOO = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/goo.png");
+__GAME_END = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/game_end.png");
 __PLASMA_BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/plasma_ball.png");
 __TEST = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/test.png");
 __HACK_ITALIC = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Italic.ttf", COMP_SOC_COIN_WIDTH, ALLEGRO_TTF_NO_KERNING);
@@ -94,20 +115,20 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
     
     // GENERATE RANDOM ENTITIES FOR TESTING
     srand(time(NULL));
-
+    
+    struct entity *base = addEntity(&ents);
+    initEntity(base, PLAYER_BASE);
+    base->type = BASE;
+    base->health = 1000;
+    
+    base->position.x = BASE_X;
+    base->position.y = BASE_Y;
+    
+    base->dimensions.x = TOWER_SIZE;
+    base->dimensions.y = TOWER_SIZE;
+    
     for (int i = 0; i < 10; i++) {
-        struct entity *mike = addEntity(&ents);
-        initEntity(mike, ENEMY_1);
-        mike->type = ENEMY;
-        mike->health = 100;
-        mike->velocity.x = rand() % 10;
-        mike->velocity.y = rand() % 10;
-
-        mike->position.x = abs(rand() % RES_X);
-        mike->position.y = abs(rand() % RES_Y);
-
-        mike->dimensions.x = 100;
-        mike->dimensions.y = 100;
+        spawnEnemy(&ents);
     }
 
     // Register event sources
@@ -134,6 +155,8 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
     al_start_timer(timer);
 
     // Game loop
+    unsigned long frameCount = 0;
+    int last = 0;
     bool running = true;
     bool redraw = true;
     while (running) {
@@ -161,7 +184,7 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
 
                     if (isFullyInWall(&towerSummonTmp, mapWalls) && state.compSocCoins >= TOWER_COST) {
                         clickSummon_real = addEntity(&ents);
-                        initEntity(clickSummon_real, TEST);
+                        initEntity(clickSummon_real, BASE_TOWER);
                         initTower(clickSummon_real);
 
                         clickSummon_real->position.x = event.mouse.x;
@@ -176,6 +199,12 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
                     break;
                 case ALLEGRO_EVENT_TIMER:
                     redraw = true;
+                    frameCount++;
+                    if ((unsigned long) time(NULL) - last < (frameCount / 3600) 
+                        && time(NULL) != last) {
+                        spawnEnemy(&ents);
+                        last = time(NULL);
+                    }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
@@ -225,10 +254,13 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
     // Clean up
     al_destroy_bitmap(BACKGROUND_COLLISIONS);
 al_destroy_bitmap(BACKGROUND);
+al_destroy_bitmap(BASE_TOWER);
 al_destroy_bitmap(VOID_BALL);
+al_destroy_bitmap(PLAYER_BASE);
 al_destroy_bitmap(COMPSOC_COIN);
 al_destroy_bitmap(ENEMY_1);
 al_destroy_bitmap(GOO);
+al_destroy_bitmap(GAME_END);
 al_destroy_bitmap(PLASMA_BALL);
 al_destroy_bitmap(TEST);
 al_destroy_font(HACK_ITALIC);

@@ -14,9 +14,13 @@
 
 #define FIRE_RATE 1
 #define TOWER_COST 10
-#define TOWER_RANGE 1000
+#define TOWER_RANGE 2500
 #define TOWER_SIZE 100
 #define BALL_SIZE 30
+#define ENEMY_SIZE 50
+
+#define BASE_X 295
+#define BASE_Y 100
 
 // define M_PI. it is not defined in POSIX compliant implementations so it needs defining
 #include <math.h>

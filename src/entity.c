@@ -167,15 +167,23 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
     }
 
     // Run custom logic for each entity
+    struct vect2 baseLocation = {BASE_X, BASE_Y};
     for (int i = 0; i < e->len; i++) {
+        double magnitude;
         struct entity *ent = &e->list[i], *enemy = NULL, *projectileEnt = NULL;
         struct towerEntityData *towerData;
-        struct vect2 projectileVector;
+        struct vect2 projectileVector, dirToBase;
         
         // Run the entity logic
         switch (ent->type) {
             case NONE:
             case BASE:
+                if (ent->health == 0) {
+                    ent->entityAsset = GAME_END;
+                    drawEntity(ent);
+                    return;
+                }
+                baseLocation = ent->position;
                 break;
             case TOWER:
                 towerData = (struct towerEntityData *) ent->entityData;
@@ -183,7 +191,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                 for (int j = 0; j < e->len; j++) {
                     if (j != i && e->list[j].type == ENEMY) {
                         double dist = getDist(ent->position, e->list[j].position);
-                        if (dist < min) {
+                        if (dist < min && dist < TOWER_RANGE) {
                             min = dist;
                             minIndex = j;
                         }
@@ -212,7 +220,14 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                 if (ent->health <= 0) {
                     removeEntity(e, i);
                     i--;
+                } else {                
+                    dirToBase = normalise(minus(ent->position, baseLocation));
+                    magnitude = mag(ent->velocity);
+                    dirToBase.x *= magnitude;
+                    dirToBase.y *= magnitude;
+                    ent->velocity = dirToBase;
                 }
+                
                 break;
             case PROJECTILE:
                 ent->velocity.x *= 0.98;

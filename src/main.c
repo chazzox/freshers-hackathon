@@ -11,7 +11,22 @@
 #include "utils.h"
 #include "assets.h"
 
-__EXTERN__ASSET__DEFS__()
+__EXTERN__ASSET__DEFS__();
+
+void spawnEnemy(struct entities *ents) {
+    struct entity *enemy = addEntity(ents);
+    initEntity(enemy, ENEMY_1);
+    enemy->type = ENEMY;
+    enemy->health = 100;
+    enemy->velocity.x = rand() % 10;
+    enemy->velocity.y = rand() % 10;
+    
+    enemy->position.x = 510;//abs(rand() % RES_X);
+    enemy->position.y = 669;//abs(rand() % RES_Y);
+    
+    enemy->dimensions.x = ENEMY_SIZE;
+    enemy->dimensions.y = ENEMY_SIZE;
+}
 
 // This always runs headless and contextless
 int main() {
@@ -70,20 +85,20 @@ int main() {
     
     // GENERATE RANDOM ENTITIES FOR TESTING
     srand(time(NULL));
-
+    
+    struct entity *base = addEntity(&ents);
+    initEntity(base, PLAYER_BASE);
+    base->type = BASE;
+    base->health = 1000;
+    
+    base->position.x = BASE_X;
+    base->position.y = BASE_Y;
+    
+    base->dimensions.x = TOWER_SIZE;
+    base->dimensions.y = TOWER_SIZE;
+    
     for (int i = 0; i < 10; i++) {
-        struct entity *mike = addEntity(&ents);
-        initEntity(mike, ENEMY_1);
-        mike->type = ENEMY;
-        mike->health = 100;
-        mike->velocity.x = rand() % 10;
-        mike->velocity.y = rand() % 10;
-
-        mike->position.x = abs(rand() % RES_X);
-        mike->position.y = abs(rand() % RES_Y);
-
-        mike->dimensions.x = 100;
-        mike->dimensions.y = 100;
+        spawnEnemy(&ents);
     }
 
     // Register event sources
@@ -110,6 +125,8 @@ int main() {
     al_start_timer(timer);
 
     // Game loop
+    unsigned long frameCount = 0;
+    int last = 0;
     bool running = true;
     bool redraw = true;
     while (running) {
@@ -137,7 +154,7 @@ int main() {
 
                     if (isFullyInWall(&towerSummonTmp, mapWalls) && state.compSocCoins >= TOWER_COST) {
                         clickSummon_real = addEntity(&ents);
-                        initEntity(clickSummon_real, TEST);
+                        initEntity(clickSummon_real, BASE_TOWER);
                         initTower(clickSummon_real);
 
                         clickSummon_real->position.x = event.mouse.x;
@@ -152,6 +169,12 @@ int main() {
                     break;
                 case ALLEGRO_EVENT_TIMER:
                     redraw = true;
+                    frameCount++;
+                    if ((unsigned long) time(NULL) - last < (frameCount / 3600) 
+                        && time(NULL) != last) {
+                        spawnEnemy(&ents);
+                        last = time(NULL);
+                    }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
