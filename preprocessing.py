@@ -40,13 +40,11 @@ for file in os.listdir(IMAGES):
 
     assetsFile.write(f"#define {define} __{define}\n")
     assetsFile.write(f"#define IMG_{define} \"{IMAGES}/{file}\"\n")
+    
+assetsFile.write("void __INIT__BITMAPS__()\n{")
+assetsFile.write(bitmapInit)
+assetsFile.write("\n}\nvoid __FREE__BITMAPS__() {\n")
+assetsFile.write(bitmapFree)
+assetsFile.write("}\n")
 
 assetsFile.close()
-
-mainFile = open(f"{sourcePath}/main.c", "r")
-mainSRC = mainFile.read().replace("// __INIT__BITMAPS__", bitmapInit).replace("// __FREE__BITMAPS__", bitmapFree)
-mainFile.close()
-
-mainFile = open(f"{sourcePath}/main2.c", "w")
-mainFile.write(mainSRC)
-mainFile.close()

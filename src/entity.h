@@ -6,7 +6,7 @@
 #define ENTITY_LIST_BLOCK_LENGTH 4096
 
 enum entityType {
-    NONE, BASE, TOWER, ENEMY_1, ENEMY_2, PROJECTILE, BOUNCING_PROJECTILE
+    NONE, BASE, TOWER, ENEMY_1, ENEMY_2, PROJECTILE,
 };
 
 // This is a dynamic list that will grow if there are too many entites and shrink if it can
@@ -37,8 +37,3 @@ bool isFullyInWall(struct entity *ent, struct mapWalls *walls);
 bool isCollidingWith(struct entity *a, struct entity *b);
 
 // Init code for different entity types
-struct bouncingProjectileData {
-    struct vect2 lastVelocity;
-    int bounces;
-};
-void initBouncingProjectile(struct entity *e, int maxBounces);

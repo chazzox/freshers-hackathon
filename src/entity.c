@@ -151,40 +151,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                     removeEntity(e, i);
                     i--;
                 }
-                break;
-            case BOUNCING_PROJECTILE:
-                if (ent->entityData != NULL) {
-                    struct bouncingProjectileData *data = (struct bouncingProjectileData *) ent->entityData;
-
-                    // Bounce off of walls and map edges.
-                    if (ent->velocity.x == 0 && ent->velocity.y == 0) {
-                        data->bounces--;
-                        data->lastVelocity.x *= -1;
-                        data->lastVelocity.y *= -1;
-
-                        ent->velocity.x = data->lastVelocity.x;
-                        ent->velocity.y = data->lastVelocity.y;
-
-                        if (data->bounces <= 0) {
-                            removeEntity(e, i);
-                            i--;
-                            break;
-                        }
-                    }
-
-                    if (ent->velocity.x != 0 && ent->velocity.y != 0) {
-                        data->lastVelocity.x = ent->velocity.x;
-                        data->lastVelocity.y = ent->velocity.y;
-                    }
-
-                    // TODO: Check if colliding with another entity
-                }
-
-                if (ent->health == 0) {
-                    removeEntity(e, i);
-                    i--;
-                }
-                break;
+                break;            
         }
     }
 
@@ -226,12 +193,4 @@ bool isCollidingWith(struct entity* a, struct entity* b) {
     bool yMatch = a->position.y >= b->position.y
         && a->position.y + a->dimensions.y <= b->position.y + b->dimensions.y;
     return xMatch && yMatch;
-}
-
-void initBouncingProjectile(struct entity *e, int maxBounces) {
-    struct bouncingProjectileData *data = (struct bouncingProjectileData *) malloc(sizeof(struct bouncingProjectileData));
-    data->lastVelocity = e->velocity;
-    data->bounces = maxBounces;
-    e->entityData = data;
-    e->type = BOUNCING_PROJECTILE;
 }

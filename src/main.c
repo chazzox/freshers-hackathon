@@ -55,7 +55,7 @@ int main() {
 
     // Init plugins
     al_init_image_addon();
-    // __INIT__BITMAPS__
+    __INIT__BITMAPS__();
 
     // Init game
     struct entities ents;
@@ -76,23 +76,6 @@ int main() {
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
     }*/
-
-    ///* // GENERATE RANDOM BALLS FOR TESTING
-    srand(time(NULL));
-
-    for (int i = 0; i < 10000; i++) {
-        struct entity *ball = addEntity(&ents);
-        initEntity(ball, BALL);
-        initBouncingProjectile(ball, 5);
-        ball->velocity.x = 1;
-        ball->velocity.y = 1;
-
-        ball->position.x = abs(rand() % RES_X);
-        ball->position.y = abs(rand() % RES_Y);
-
-        ball->dimensions.x = BALL_SIZE;
-        ball->dimensions.y = BALL_SIZE;
-    }//*/
 
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
@@ -204,7 +187,7 @@ int main() {
     }
 
     // Clean up
-    // __FREE__BITMAPS__
+    __FREE__BITMAPS__();
     al_destroy_display(display);
     al_destroy_event_queue(event_queue);
 

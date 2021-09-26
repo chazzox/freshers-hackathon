@@ -21,7 +21,7 @@ add_custom_target(prepy ${PRE_PY})
 
 # src
 set(MAIN
-    src/main2.c
+    src/main.c
     )
 set(SRC_FILES
     src/utils.c
