@@ -10,3 +10,4 @@ AllowShortFunctionsOnASingleLine: true
 AllowShortEnumsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false
 SortIncludes: false
+IndentCaseLabels: true

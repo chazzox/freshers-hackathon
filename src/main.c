@@ -40,14 +40,20 @@ int main() {
     }
 
     // Install Mouse drivers
-    if(!al_install_mouse()){
+    if (!al_install_mouse()) {
         fprintf(stderr, "Failed to install Mouse");
         return 9;
     }
 
     // Install Touch Driver
-    if(!al_install_touch_input()){
-        fprintf(stderr, "Failed to install touch");
+    if (!al_install_touch_input()) {
+        fprintf(stderr, "Failed to install touch\n");
+    }
+
+    // Install Keyboard Driver
+    if (!al_install_keyboard()) {
+        fprintf(stderr, "Failed to install keyboard\n");
+        return 12;
     }
 
     // Create the event queue
@@ -67,7 +73,7 @@ int main() {
     initGameState(&state);
     struct entities ents;
     initEntities(&ents);
-    
+
     /* // GENERATE RANDOM ENTITIES FOR TESTING
     srand(time(NULL));
 
@@ -92,12 +98,13 @@ int main() {
     al_register_event_source(event_queue, al_get_display_event_source(display));
     al_register_event_source(event_queue, al_get_timer_event_source(timer));
     al_register_event_source(event_queue, al_get_mouse_event_source());
-	
-	// Touch inputs will register as mouse events
-	if(al_is_touch_input_installed()){
-		al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
-		al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
-	}
+    al_register_event_source(event_queue, al_get_keyboard_event_source());
+
+    // Touch inputs will register as mouse events
+    if (al_is_touch_input_installed()) {
+        al_set_mouse_emulation_mode(ALLEGRO_MOUSE_EMULATION_EXCLUSIVE);
+        al_register_event_source(event_queue, al_get_touch_input_mouse_emulation_event_source());
+    }
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -125,6 +132,15 @@ int main() {
         // Handle the event
         if (get_event) {
             switch (event.type) {
+                case ALLEGRO_EVENT_KEY_DOWN:
+                    if (event.keyboard.modifiers) {
+                        fprintf(stderr, "Mod Key: %s\n",
+                                al_keycode_to_name(event.keyboard.keycode));
+                    } else {
+                        fprintf(stderr, "%s pressed \n",
+                                al_keycode_to_name(event.keyboard.keycode));
+                    }
+                    break;
                 case ALLEGRO_EVENT_MOUSE_BUTTON_UP:
                     towerSummonTmp.position.x = event.mouse.x;
                     towerSummonTmp.position.y = event.mouse.y;
@@ -157,10 +173,12 @@ int main() {
                 case ALLEGRO_EVENT_DISPLAY_SWITCH_IN:
                     fprintf(stderr, "Display Switch Event\n");
                     break;
-				// Events that we dont care about
+                // Events that we dont care about
+                case ALLEGRO_EVENT_KEY_UP:
+                case ALLEGRO_EVENT_KEY_CHAR:
                 case ALLEGRO_EVENT_MOUSE_LEAVE_DISPLAY:
                 case ALLEGRO_EVENT_MOUSE_ENTER_DISPLAY:
-				case ALLEGRO_EVENT_MOUSE_WARPED:
+                case ALLEGRO_EVENT_MOUSE_WARPED:
                 case ALLEGRO_EVENT_MOUSE_BUTTON_DOWN:
                 case ALLEGRO_EVENT_MOUSE_AXES:
                     break;
@@ -187,7 +205,7 @@ int main() {
             }*/
 
             renderCoinage(&state);
-            
+
             // flip display
             al_flip_display();
             redraw = false;
