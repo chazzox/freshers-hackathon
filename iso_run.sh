@@ -5,6 +5,6 @@ sudo pacman -Sy
 sudo pacman -S make cmake gcc libpng zlib pthread allegro
 
 echo "Compile and run"
-mkdir -p bin; cd bin; cmake .. -DCMAKE_BUILD_TYPE=RELEASE && cmake --build . && ./CursedRTS_Hackathon &
+mkdir -p bin; cd bin; cmake .. -DCMAKE_BUILD_TYPE=RELEASE && cmake --build . && ./FreshersTD_Hackathon &
 
 echo "Return to .zshrc"

@@ -14,7 +14,7 @@ We have a modded manjaro ISO that launches the program on launch. This works rea
 Install community/allegro _(manjaro package)_ then run the executable.
 
 ```bash
-sudo pacman -Sy; sudo pacman -S allegro; ./rts
+sudo pacman -Sy; sudo pacman -S allegro; ./bin/FreshersTD_Hackathon
 ```
 
 You can also run the `iso_run.sh` file, this will install build tools, compile and run the game
