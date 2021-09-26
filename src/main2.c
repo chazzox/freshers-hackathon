@@ -15,6 +15,7 @@ ALLEGRO_BITMAP *__BACKGROUND_COLLISIONS = NULL;
 ALLEGRO_BITMAP *__BACKGROUND = NULL;
 ALLEGRO_BITMAP *__VOID_BALL = NULL;
 ALLEGRO_BITMAP *__COMPSOC_COIN = NULL;
+ALLEGRO_BITMAP *__ENEMY_1 = NULL;
 ALLEGRO_BITMAP *__GOO = NULL;
 ALLEGRO_BITMAP *__PLASMA_BALL = NULL;
 ALLEGRO_BITMAP *__TEST = NULL;
@@ -75,6 +76,7 @@ int main() {
 __BACKGROUND = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background.png");
 __VOID_BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/void_ball.png");
 __COMPSOC_COIN = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/compsoc_coin.png");
+__ENEMY_1 = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/enemy_1.png");
 __GOO = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/goo.png");
 __PLASMA_BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/plasma_ball.png");
 __TEST = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/test.png");
@@ -90,12 +92,14 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
     struct entities ents;
     initEntities(&ents);
     
-    /* // GENERATE RANDOM ENTITIES FOR TESTING
+    // GENERATE RANDOM ENTITIES FOR TESTING
     srand(time(NULL));
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         struct entity *mike = addEntity(&ents);
-        initEntity(mike, TEST);
+        initEntity(mike, ENEMY_1);
+        mike->type = ENEMY;
+        mike->health = 100;
         mike->velocity.x = rand() % 10;
         mike->velocity.y = rand() % 10;
 
@@ -104,7 +108,7 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
 
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
-    }*/
+    }
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -155,13 +159,15 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
                     towerSummonTmp.dimensions.x = TOWER_SIZE;
                     towerSummonTmp.dimensions.y = TOWER_SIZE;
 
-                    if (isFullyInWall(&towerSummonTmp, mapWalls)) {
+                    if (isFullyInWall(&towerSummonTmp, mapWalls) && state.compSocCoins >= TOWER_COST) {
                         clickSummon_real = addEntity(&ents);
                         initEntity(clickSummon_real, TEST);
                         initTower(clickSummon_real);
 
                         clickSummon_real->position.x = event.mouse.x;
                         clickSummon_real->position.y = event.mouse.y;
+                        
+                        state.compSocCoins -= TOWER_COST;
 
                         printf("Created a test tower entity.\n");
                     }
@@ -221,6 +227,7 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
 al_destroy_bitmap(BACKGROUND);
 al_destroy_bitmap(VOID_BALL);
 al_destroy_bitmap(COMPSOC_COIN);
+al_destroy_bitmap(ENEMY_1);
 al_destroy_bitmap(GOO);
 al_destroy_bitmap(PLASMA_BALL);
 al_destroy_bitmap(TEST);

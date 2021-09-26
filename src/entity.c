@@ -82,7 +82,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
         
         if (ent->type == PROJECTILE) {
             x = ent->position.x + ent->velocity.x;
-            x = ent->position.y + ent->velocity.y;
+            y = ent->position.y + ent->velocity.y;
             
             // Check that I do not leave the mapdata
             if (x < 0) {
@@ -181,7 +181,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                 towerData = (struct towerEntityData *) ent->entityData;
                 int min = INT_MAX, minIndex = -1;
                 for (int j = 0; j < e->len; j++) {
-                    if (j != i) {
+                    if (j != i && e->list[j].type == ENEMY) {
                         double dist = getDist(ent->position, e->list[j].position);
                         if (dist < min) {
                             min = dist;
@@ -196,11 +196,17 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                     
                     projectileEnt = addEntity(e);
                     initEntity(projectileEnt, PLASMA_BALL);
+                    projectileVector.x *= 20;
+                    projectileVector.y *= 20;
                     projectileEnt->velocity = projectileVector;
                     projectileEnt->type = PROJECTILE;
                     projectileEnt->dimensions.x = BALL_SIZE;
-                    projectileEnt->dimensions.y = BALL_SIZE;                    
+                    projectileEnt->dimensions.y = BALL_SIZE;
+                    projectileEnt->position = ent->position;
+                    projectileEnt->health = 10;
                     towerData->lastShotAt = time(NULL);
+                    
+                    printf("Entity %d has shot.\n", i);
                 }
                 break;
             case ENEMY:
@@ -210,8 +216,8 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                 }
                 break;
             case PROJECTILE:
-                ent->velocity.x *= 0.95;
-                ent->velocity.y *= 0.95;
+                ent->velocity.x *= 0.98;
+                ent->velocity.y *= 0.98;
                 if(ent->velocity.x < 0.1 && ent->velocity.y < 0.1) {
                     ent->health = 0;
                 }
@@ -331,7 +337,7 @@ bool isEnemy(struct entity* e) {
 
 // TODO: Make this an advanced algorithm
 struct vect2 advancedAimingAlg(struct entity *tower, struct entity *target) {
-    return minus(tower->position, plus(target->position, target->velocity));
+    return normalise(minus(tower->position, plus(target->position, target->velocity)));
 }
 
 void initTower(struct entity* e) {    

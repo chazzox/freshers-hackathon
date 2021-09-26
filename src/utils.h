@@ -13,6 +13,7 @@
 #endif
 
 #define FIRE_RATE 1
+#define TOWER_COST 10
 #define TOWER_RANGE 1000
 #define TOWER_SIZE 100
 #define BALL_SIZE 30

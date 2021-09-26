@@ -68,12 +68,14 @@ int main() {
     struct entities ents;
     initEntities(&ents);
     
-    /* // GENERATE RANDOM ENTITIES FOR TESTING
+    // GENERATE RANDOM ENTITIES FOR TESTING
     srand(time(NULL));
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 10; i++) {
         struct entity *mike = addEntity(&ents);
-        initEntity(mike, TEST);
+        initEntity(mike, ENEMY_1);
+        mike->type = ENEMY;
+        mike->health = 100;
         mike->velocity.x = rand() % 10;
         mike->velocity.y = rand() % 10;
 
@@ -82,7 +84,7 @@ int main() {
 
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
-    }*/
+    }
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -133,13 +135,15 @@ int main() {
                     towerSummonTmp.dimensions.x = TOWER_SIZE;
                     towerSummonTmp.dimensions.y = TOWER_SIZE;
 
-                    if (isFullyInWall(&towerSummonTmp, mapWalls)) {
+                    if (isFullyInWall(&towerSummonTmp, mapWalls) && state.compSocCoins >= TOWER_COST) {
                         clickSummon_real = addEntity(&ents);
                         initEntity(clickSummon_real, TEST);
                         initTower(clickSummon_real);
 
                         clickSummon_real->position.x = event.mouse.x;
                         clickSummon_real->position.y = event.mouse.y;
+                        
+                        state.compSocCoins -= TOWER_COST;
 
                         printf("Created a test tower entity.\n");
                     }
