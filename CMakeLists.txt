@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # set the project name
-project(CursedRTS_Hackathon)
+project(FreshersTD_Hackathon)
 set(REPO_URL "https://github.com/chazzox/freshers-hackathon")
 
 # Link Homebrew Dir if platform macos
@@ -29,9 +29,9 @@ set(SRC_FILES
     src/mapwalls.c
     )
 
-add_executable(CursedRTS_Hackathon ${SRC_FILES} ${MAIN})
-target_link_libraries(CursedRTS_Hackathon
+add_executable(FreshersTD_Hackathon ${SRC_FILES} ${MAIN})
+target_link_libraries(FreshersTD_Hackathon
     png z pthread m
     allegro allegro_main allegro_image allegro_primitives
     allegro_color allegro_font allegro_ttf allegro_audio)
-add_dependencies(CursedRTS_Hackathon prepy)
+add_dependencies(FreshersTD_Hackathon prepy)
