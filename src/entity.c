@@ -193,19 +193,19 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                 if (minIndex != -1 && time(NULL) - towerData->lastShotAt >= FIRE_RATE) {
                     enemy = &e->list[minIndex];
                     projectileVector = advancedAimingAlg(ent, enemy);
+                    ent->facing = projectileVector;
+                    towerData->lastShotAt = time(NULL);
                     
                     projectileEnt = addEntity(e);
                     initEntity(projectileEnt, PLASMA_BALL);
                     projectileVector.x *= 20;
                     projectileVector.y *= 20;
-                    ent->facing = projectileVector;
                     projectileEnt->velocity = projectileVector;
                     projectileEnt->type = PROJECTILE;
                     projectileEnt->dimensions.x = BALL_SIZE;
                     projectileEnt->dimensions.y = BALL_SIZE;
                     projectileEnt->position = ent->position;
                     projectileEnt->health = 10;
-                    towerData->lastShotAt = time(NULL);
                 }
                 break;
             case ENEMY:
@@ -336,7 +336,10 @@ bool isEnemy(struct entity* e) {
 
 // TODO: Make this an advanced algorithm
 struct vect2 advancedAimingAlg(struct entity *tower, struct entity *target) {
-    return normalise(minus(tower->position, plus(target->position, target->velocity)));
+    struct vect2 center;
+    center.x = target->position.x + target->dimensions.x / 2;
+    center.y = target->position.y + target->dimensions.y / 2;
+    return normalise(minus(tower->position, center));
 }
 
 void initTower(struct entity* e) {    
