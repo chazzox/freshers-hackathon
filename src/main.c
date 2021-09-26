@@ -125,8 +125,7 @@ int main() {
     al_start_timer(timer);
 
     // Game loop
-    unsigned long frameCount = 0;
-    int last = 0;
+    unsigned long frameCount = 0, last = 0;
     bool running = true;
     bool redraw = true;
     while (running) {
@@ -170,10 +169,9 @@ int main() {
                 case ALLEGRO_EVENT_TIMER:
                     redraw = true;
                     frameCount++;
-                    if ((unsigned long) time(NULL) - last < (frameCount / 3600) 
-                        && time(NULL) != last) {
+                    if (frameCount - last > 5000 / (frameCount * frameCount)) {
                         spawnEnemy(&ents);
-                        last = time(NULL);
+                        last = frameCount;
                     }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
