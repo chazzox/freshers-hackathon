@@ -13,8 +13,10 @@
 
 ALLEGRO_BITMAP *__BACKGROUND_COLLISIONS = NULL;
 ALLEGRO_BITMAP *__BACKGROUND = NULL;
+ALLEGRO_BITMAP *__VOID_BALL = NULL;
 ALLEGRO_BITMAP *__COMPSOC_COIN = NULL;
-ALLEGRO_BITMAP *__BALL = NULL;
+ALLEGRO_BITMAP *__GOO = NULL;
+ALLEGRO_BITMAP *__PLASMA_BALL = NULL;
 ALLEGRO_BITMAP *__TEST = NULL;
 ALLEGRO_FONT *__HACK_ITALIC = NULL;
 ALLEGRO_FONT *__HACK_BOLD = NULL;
@@ -71,13 +73,15 @@ int main() {
     al_init_image_addon();
     __BACKGROUND_COLLISIONS = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background_collisions.png");
 __BACKGROUND = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/background.png");
+__VOID_BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/void_ball.png");
 __COMPSOC_COIN = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/compsoc_coin.png");
-__BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/ball.png");
+__GOO = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/goo.png");
+__PLASMA_BALL = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/plasma_ball.png");
 __TEST = al_load_bitmap("/home/danny/freshers-hackathon/assets/images/test.png");
-__HACK_ITALIC = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Italic.ttf", 250, ALLEGRO_TTF_NO_KERNING);
-__HACK_BOLD = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Bold.ttf", 250, ALLEGRO_TTF_NO_KERNING);
-__HACK_BOLDITALIC = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_BoldItalic.ttf", 250, ALLEGRO_TTF_NO_KERNING);
-__HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Regular.ttf", 250, ALLEGRO_TTF_NO_KERNING);
+__HACK_ITALIC = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Italic.ttf", COMP_SOC_COIN_WIDTH, ALLEGRO_TTF_NO_KERNING);
+__HACK_BOLD = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Bold.ttf", COMP_SOC_COIN_WIDTH, ALLEGRO_TTF_NO_KERNING);
+__HACK_BOLDITALIC = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_BoldItalic.ttf", COMP_SOC_COIN_WIDTH, ALLEGRO_TTF_NO_KERNING);
+__HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/Hack_Regular.ttf", COMP_SOC_COIN_WIDTH, ALLEGRO_TTF_NO_KERNING);
 ;
 
     // Init game
@@ -101,7 +105,7 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
     }*/
-
+    
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
     printf("Loaded collision boxes.\n");
@@ -156,7 +160,7 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
 
                         clickSummon_real->position.x = event.mouse.x;
                         clickSummon_real->position.y = event.mouse.y;
-
+                        
                         clickSummon_real->dimensions.x = TOWER_SIZE;
                         clickSummon_real->dimensions.y = TOWER_SIZE;
 
@@ -194,17 +198,18 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
             // Draw the background
             al_draw_bitmap(BACKGROUND, 0, 0, 0);
 
-            // Draw all entites
-            runEntityLogic(&ents, mapWalls);
-
             /* //DEBUG FOR TESTING COLLISION MAP
             for (int x = 0; x < RES_X; x++) {
                 for (int y = 0; y < RES_Y; y++) {
                     if (mapWalls->wallArr[x][y]) al_draw_pixel(x, y, al_map_rgb(0, 0, 255));
                 }
             }*/
-
-            renderCoinage(&state);
+            
+            // Draw all entites
+            runEntityLogic(&ents, mapWalls, &state);
+            
+            // Display the UI overlay
+            renderUI(&state);
             
             // flip display
             al_flip_display();
@@ -215,8 +220,10 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
     // Clean up
     al_destroy_bitmap(BACKGROUND_COLLISIONS);
 al_destroy_bitmap(BACKGROUND);
+al_destroy_bitmap(VOID_BALL);
 al_destroy_bitmap(COMPSOC_COIN);
-al_destroy_bitmap(BALL);
+al_destroy_bitmap(GOO);
+al_destroy_bitmap(PLASMA_BALL);
 al_destroy_bitmap(TEST);
 al_destroy_font(HACK_ITALIC);
 al_destroy_font(HACK_BOLD);

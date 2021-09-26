@@ -83,7 +83,7 @@ int main() {
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
     }*/
-
+    
     printf("Loading collision boxes...\n");
     struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
     printf("Loaded collision boxes.\n");
@@ -138,7 +138,7 @@ int main() {
 
                         clickSummon_real->position.x = event.mouse.x;
                         clickSummon_real->position.y = event.mouse.y;
-
+                        
                         clickSummon_real->dimensions.x = TOWER_SIZE;
                         clickSummon_real->dimensions.y = TOWER_SIZE;
 
@@ -176,17 +176,18 @@ int main() {
             // Draw the background
             al_draw_bitmap(BACKGROUND, 0, 0, 0);
 
-            // Draw all entites
-            runEntityLogic(&ents, mapWalls);
-
             /* //DEBUG FOR TESTING COLLISION MAP
             for (int x = 0; x < RES_X; x++) {
                 for (int y = 0; y < RES_Y; y++) {
                     if (mapWalls->wallArr[x][y]) al_draw_pixel(x, y, al_map_rgb(0, 0, 255));
                 }
             }*/
-
-            renderCoinage(&state);
+            
+            // Draw all entites
+            runEntityLogic(&ents, mapWalls, &state);
+            
+            // Display the UI overlay
+            renderUI(&state);
             
             // flip display
             al_flip_display();

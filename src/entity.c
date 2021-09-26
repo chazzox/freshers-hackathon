@@ -72,7 +72,7 @@ bool isFullyInWall(struct entity *ent, struct mapWalls *walls) {
 }
 
 #define SET_VELO_ZERO ent->velocity.x = 0;ent->velocity.y = 0;
-void runEntityLogic(struct entities *e, struct mapWalls *walls) {
+void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState *state) {
     // Move the entity
     for (int i = 0; i < e->len; i++) {
         struct entity *ent = &e->list[i];
@@ -143,15 +143,47 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
                 break;
             case TOWER:
             case ENEMY_1:
+                // TODO: Enemy logic
+                goto ENEMY_GENERIC;
             case ENEMY_2:
-                // TODO: Change me
-                break;
-            case PROJECTILE:
-                if (ent->health == 0) {
+                // TODO: Enemy logic
+                goto ENEMY_GENERIC;
+            ENEMY_GENERIC:
+                if (ent->health <= 0) {
                     removeEntity(e, i);
                     i--;
                 }
-                break;            
+                break;
+            case BASIC_PROJECTILE:
+                ent->velocity.x *= 0.95;
+                ent->velocity.y *= 0.95;
+                if(ent->velocity.x < 0.1 && ent->velocity.y < 0.1) {
+                    ent->health = 0;
+                }
+                goto PROJECTILE_GENERIC;
+            PROJECTILE_GENERIC:
+                // Iterate over all over particles to get projectile collisions with enemies
+                for (int j = 0; j < e->len; j++) {
+                    if (j != i) {
+                        struct entity *ent2 = &e->list[j];
+                        if (isEnemy(ent2)) 
+                        if (isCollidingWith(ent, ent2)) {
+                            state->compSocCoins++;
+                            ent2->health--;
+                            ent->health--;
+                            
+                            if (ent->health <= 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (ent->health <= 0) {
+                    removeEntity(e, i);
+                    i--;
+                }
+                break;
         }
     }
 
@@ -166,6 +198,8 @@ void initEntity(struct entity *e,
     e->velocity.y = 0;
     e->dimensions.x = 0;
     e->dimensions.y = 0;
+    e->facing.x = 0;
+    e->facing.y = 0;
     e->type = NONE;
     e->entityData = NULL;
 }
@@ -178,13 +212,56 @@ void destroyEntity(struct entity* e) {
 }
 
 void drawEntity(struct entity* e) {
-    int flags = 0;
-    if (e->velocity.x < 0)
-        flags |= ALLEGRO_FLIP_HORIZONTAL;
-    if (e->velocity.y < 0)
-        flags |= ALLEGRO_FLIP_VERTICAL;
-
-    al_draw_bitmap(e->entityAsset, e->position.x, e->position.y, flags);
+    double angle;
+    
+    // Check for undefined output
+    if (e->facing.x == 0 && e->facing.y == 0) {
+        angle = 0;
+    } else if (e->facing.x == 0) {
+        if (e->facing.y >= 0) {
+            angle = 1.5 * M_PI;
+        } else {
+            angle = - M_PI / 2;
+        }
+    } else if (e->facing.y == 0) {
+        if (e->facing.x >= 0) {
+            angle = 0;
+        } else {
+            angle = M_PI;
+        }
+    }
+    
+    // Check which quadrant it is being drawn in
+    else {
+        angle = atan(e->facing.y / e->facing.x);
+    
+        // atan has domain -pi/2 < atan < pi/2
+        // therefore the output may be offset
+        if (e->facing.x > 0) {
+            // +, +
+            if (e->facing.y > 0) {
+                angle = 2 * M_PI - angle;
+            }
+            // +, -
+            else {
+                angle *= -1;
+            }
+        } else {
+            // -, +
+            if (e->facing.y > 0) {
+                angle += 1.5 *  M_PI;
+            } 
+            // -, -
+            else {
+                angle += M_PI / 2;
+            }
+        }
+    }
+    
+    al_draw_rotated_bitmap(e->entityAsset, 
+                           e->dimensions.x / 2, e->dimensions.y / 2,
+                           e->position.x, e->position.y,
+                           angle, 0);
 }
 
 bool isCollidingWith(struct entity* a, struct entity* b) {
@@ -193,4 +270,8 @@ bool isCollidingWith(struct entity* a, struct entity* b) {
     bool yMatch = a->position.y >= b->position.y
         && a->position.y + a->dimensions.y <= b->position.y + b->dimensions.y;
     return xMatch && yMatch;
+}
+
+bool isEnemy(struct entity* e) {
+    return e->type == ENEMY_1 || e->type == ENEMY_2;
 }

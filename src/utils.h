@@ -15,6 +15,12 @@
 #define TOWER_SIZE 100
 #define BALL_SIZE 30
 
+// define M_PI. it is not defined in POSIX compliant implementations so it needs defining
+#include <math.h>
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 struct vect2 {
     double x, y;
 };

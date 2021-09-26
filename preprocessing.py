@@ -49,7 +49,7 @@ for file in os.listdir(FONTS):
     print(f"Defined {define}")
     assetsFile.write(f"extern ALLEGRO_FONT *__{define};\n")
     externInit += f"ALLEGRO_FONT *__{define} = NULL;\n"
-    initAssets += f"__{define} = al_load_ttf_font(\"{FONTS}/{file}\", 250, ALLEGRO_TTF_NO_KERNING);\n"
+    initAssets += f"__{define} = al_load_ttf_font(\"{FONTS}/{file}\", COMP_SOC_COIN_WIDTH, ALLEGRO_TTF_NO_KERNING);\n"
     freeAssets += f"al_destroy_font({define});\n"
 
     assetsFile.write(f"#define {define} __{define}\n")
