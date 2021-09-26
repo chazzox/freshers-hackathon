@@ -105,10 +105,6 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
         mike->dimensions.x = 100;
         mike->dimensions.y = 100;
     }*/
-    
-    printf("Loading collision boxes...\n");
-    struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
-    printf("Loaded collision boxes.\n");
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -123,7 +119,12 @@ __HACK_REGULAR = al_load_ttf_font("/home/danny/freshers-hackathon/assets/fonts/H
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_draw_text(HACK_BOLD, al_map_rgb(255, 255, 255), 30, 30, 0, "LOADING...");
     al_flip_display();
+    
+    printf("Loading collision boxes...\n");
+    struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
+    printf("Loaded collision boxes.\n");
 
     // Start the timer
     al_start_timer(timer);

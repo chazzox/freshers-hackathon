@@ -12,6 +12,9 @@
 #define FPS 60
 #endif
 
+#define TOWER_RANGE_LONG 1000
+#define TOWER_RANGE_MEDIUM 750
+#define TOWER_RANGE_SHORT 500
 #define TOWER_SIZE 100
 #define BALL_SIZE 30
 
