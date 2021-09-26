@@ -198,6 +198,7 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                     initEntity(projectileEnt, PLASMA_BALL);
                     projectileVector.x *= 20;
                     projectileVector.y *= 20;
+                    ent->facing = projectileVector;
                     projectileEnt->velocity = projectileVector;
                     projectileEnt->type = PROJECTILE;
                     projectileEnt->dimensions.x = BALL_SIZE;
@@ -205,8 +206,6 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                     projectileEnt->position = ent->position;
                     projectileEnt->health = 10;
                     towerData->lastShotAt = time(NULL);
-                    
-                    printf("Entity %d has shot.\n", i);
                 }
                 break;
             case ENEMY:
