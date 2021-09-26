@@ -19,7 +19,7 @@
 #define BALL_SIZE 30
 #define ENEMY_SIZE 50
 
-#define BASE_X 295
+#define BASE_X 100
 #define BASE_Y 100
 
 // define M_PI. it is not defined in POSIX compliant implementations so it needs defining
