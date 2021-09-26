@@ -21,8 +21,8 @@ void spawnEnemy(struct entities *ents) {
     enemy->velocity.x = rand() % 10;
     enemy->velocity.y = rand() % 10;
     
-    enemy->position.x = 510;//abs(rand() % RES_X);
-    enemy->position.y = 669;//abs(rand() % RES_Y);
+    enemy->position.x = 1497;//abs(rand() % RES_X);
+    enemy->position.y = 1000;//abs(rand() % RES_Y);
     
     enemy->dimensions.x = ENEMY_SIZE;
     enemy->dimensions.y = ENEMY_SIZE;
@@ -154,7 +154,7 @@ int main() {
 
                     if (isFullyInWall(&towerSummonTmp, mapWalls) && state.compSocCoins >= TOWER_COST) {
                         clickSummon_real = addEntity(&ents);
-                        initEntity(clickSummon_real, BASE_TOWER);
+                        initEntity(clickSummon_real, PLASMA_TOWER);
                         initTower(clickSummon_real);
 
                         clickSummon_real->position.x = event.mouse.x;

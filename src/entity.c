@@ -226,13 +226,14 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState
                     dirToBase.x *= magnitude;
                     dirToBase.y *= magnitude;
                     ent->velocity = dirToBase;
+                    ent->facing = dirToBase;
                 }
                 
                 break;
             case PROJECTILE:
                 ent->velocity.x *= 0.98;
                 ent->velocity.y *= 0.98;
-                if(ent->velocity.x < 0.1 && ent->velocity.y < 0.1) {
+                if(ent->velocity.x < 5 && ent->velocity.y < 5) {
                     ent->health = 0;
                 }
                 
@@ -333,7 +334,8 @@ void drawEntity(struct entity* e) {
     
     al_draw_rotated_bitmap(e->entityAsset, 
                            e->dimensions.x / 2, e->dimensions.y / 2,
-                           e->position.x, e->position.y,
+                           e->position.x + e->dimensions.x / 2,
+                           e->position.y + e->dimensions.y / 2,
                            angle, 0);
 }
 

@@ -15,7 +15,7 @@
 #define FIRE_RATE 1
 #define TOWER_COST 10
 #define TOWER_RANGE 2500
-#define TOWER_SIZE 100
+#define TOWER_SIZE 50
 #define BALL_SIZE 30
 #define ENEMY_SIZE 50
 
