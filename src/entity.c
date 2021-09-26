@@ -4,6 +4,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <limits.h>
+#include "assets.h"
 #include "mapwalls.h"
 #include "entity.h"
 #include "utils.h"
@@ -72,59 +74,90 @@ bool isFullyInWall(struct entity *ent, struct mapWalls *walls) {
 }
 
 #define SET_VELO_ZERO ent->velocity.x = 0;ent->velocity.y = 0;
-void runEntityLogic(struct entities *e, struct mapWalls *walls) {
+void runEntityLogic(struct entities *e, struct mapWalls *walls, struct gameState *state) {
     // Move the entity
     for (int i = 0; i < e->len; i++) {
         struct entity *ent = &e->list[i];
-
-        // See how far the entity can move before collision
-        struct vect2 /*velocityNormalised*/ vm = normalise(ent->velocity);
-        double vmag = mag(ent->velocity);
-
-        double x = ceil(ent->position.x + ent->velocity.x),
-               y = ceil(ent->position.y + ent->velocity.y),
-               lastX = x,
-               lastY = y;
-
-        for (double l = 0; l < ceil(vmag); l++) {
-            // Calculate the x, y of the raycast for l pixels away from position
-            x = ceil(ent->position.x) + vm.x * l;
-            y = ceil(ent->position.y) + vm.y * l;
-
-            // Check that I do not leave the map
+        double x, y;
+        
+        if (ent->type == PROJECTILE) {
+            x = ent->position.x + ent->velocity.x;
+            y = ent->position.y + ent->velocity.y;
+            
+            // Check that I do not leave the mapdata
             if (x < 0) {
                 x = 0;
                 SET_VELO_ZERO
                 break;
             }
-
+            
             if (y < 0) {
                 y = 0;
                 SET_VELO_ZERO
                 break;
             }
-
+            
             if (x + ent->dimensions.x >= RES_X) {
                 x = RES_X - 1 - ent->dimensions.x;
                 SET_VELO_ZERO
                 break;
             }
-
+            
             if (y + ent->dimensions.y >= RES_Y) {
                 y = RES_Y - 1 - ent->dimensions.y;
                 SET_VELO_ZERO
                 break;
             }
+        } else {
+            // See how far the entity can move before collision
+            struct vect2 /*velocityNormalised*/ vm = normalise(ent->velocity);
+            double vmag = mag(ent->velocity);
 
-            // If in a wall move back and stop
-            if (isPartiallyInWall(ent, walls)) {
-                x = lastX;
-                y = lastY;
-                SET_VELO_ZERO
+            x = ceil(ent->position.x + ent->velocity.x),
+            y = ceil(ent->position.y + ent->velocity.y);
+            double lastX = x,
+                lastY = y;
+
+            for (double l = 0; l < ceil(vmag); l++) {
+                // Calculate the x, y of the raycast for l pixels away from position
+                x = ceil(ent->position.x) + vm.x * l;
+                y = ceil(ent->position.y) + vm.y * l;
+
+                // Check that I do not leave the mapdata
+                if (x < 0) {
+                    x = 0;
+                    SET_VELO_ZERO
+                    break;
+                }
+                
+                if (y < 0) {
+                    y = 0;
+                    SET_VELO_ZERO
+                    break;
+                }
+                
+                if (x + ent->dimensions.x >= RES_X) {
+                    x = RES_X - 1 - ent->dimensions.x;
+                    SET_VELO_ZERO
+                    break;
+                }
+                
+                if (y + ent->dimensions.y >= RES_Y) {
+                    y = RES_Y - 1 - ent->dimensions.y;
+                    SET_VELO_ZERO
+                    break;
+                }
+
+                // If in a wall move back and stop
+                if (isPartiallyInWall(ent, walls)) {
+                    x = lastX;
+                    y = lastY;
+                    SET_VELO_ZERO
+                }
+
+                lastX = x;
+                lastY = y;
             }
-
-            lastX = x;
-            lastY = y;
         }
 
         ent->position.x = x;
@@ -134,27 +167,100 @@ void runEntityLogic(struct entities *e, struct mapWalls *walls) {
     }
 
     // Run custom logic for each entity
+    struct vect2 baseLocation = {BASE_X, BASE_Y};
     for (int i = 0; i < e->len; i++) {
-        struct entity *ent = &e->list[i];
+        double magnitude;
+        struct entity *ent = &e->list[i], *enemy = NULL, *projectileEnt = NULL;
+        struct towerEntityData *towerData;
+        struct vect2 projectileVector, dirToBase;
+        
         // Run the entity logic
         switch (ent->type) {
             case NONE:
             case BASE:
+                if (ent->health == 0) {
+                    ent->entityAsset = GAME_END;
+                    drawEntity(ent);
+                    return;
+                }
+                baseLocation = ent->position;
                 break;
             case TOWER:
-            case ENEMY_1:
-            case ENEMY_2:
-                // TODO: Change me
+                towerData = (struct towerEntityData *) ent->entityData;
+                int min = INT_MAX, minIndex = -1;
+                for (int j = 0; j < e->len; j++) {
+                    if (j != i && e->list[j].type == ENEMY) {
+                        double dist = getDist(ent->position, e->list[j].position);
+                        if (dist < min && dist < TOWER_RANGE) {
+                            min = dist;
+                            minIndex = j;
+                        }
+                    }
+                }
+                
+                if (minIndex != -1 && time(NULL) - towerData->lastShotAt >= FIRE_RATE) {
+                    enemy = &e->list[minIndex];
+                    projectileVector = advancedAimingAlg(ent, enemy);
+                    ent->facing = projectileVector;
+                    towerData->lastShotAt = time(NULL);
+                    
+                    projectileEnt = addEntity(e);
+                    initEntity(projectileEnt, PLASMA_BALL);
+                    projectileVector.x *= 20;
+                    projectileVector.y *= 20;
+                    projectileEnt->velocity = projectileVector;
+                    projectileEnt->type = PROJECTILE;
+                    projectileEnt->dimensions.x = BALL_SIZE;
+                    projectileEnt->dimensions.y = BALL_SIZE;
+                    projectileEnt->position = ent->position;
+                    projectileEnt->health = 10;
+                }
+                break;
+            case ENEMY:
+                if (ent->health <= 0) {
+                    removeEntity(e, i);
+                    i--;
+                } else {                
+                    dirToBase = normalise(minus(ent->position, baseLocation));
+                    magnitude = mag(ent->velocity);
+                    dirToBase.x *= magnitude;
+                    dirToBase.y *= magnitude;
+                    ent->velocity = dirToBase;
+                    ent->facing = dirToBase;
+                }
+                
                 break;
             case PROJECTILE:
-                if (ent->health == 0) {
+                ent->velocity.x *= 0.98;
+                ent->velocity.y *= 0.98;
+                if(ent->velocity.x < 5 && ent->velocity.y < 5) {
+                    ent->health = 0;
+                }
+                
+                // Iterate over all over particles to get projectile collisions with enemies
+                for (int j = 0; j < e->len; j++) {
+                    if (j != i) {
+                        struct entity *ent2 = &e->list[j];
+                        if (isEnemy(ent2)) 
+                        if (isCollidingWith(ent, ent2)) {
+                            state->compSocCoins++;
+                            ent2->health--;
+                            ent->health--;
+                            
+                            if (ent->health <= 0) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (ent->health <= 0) {
                     removeEntity(e, i);
                     i--;
                 }
                 break;            
         }
     }
-
 }
 
 void initEntity(struct entity *e,
@@ -166,6 +272,8 @@ void initEntity(struct entity *e,
     e->velocity.y = 0;
     e->dimensions.x = 0;
     e->dimensions.y = 0;
+    e->facing.x = 0;
+    e->facing.y = 0;
     e->type = NONE;
     e->entityData = NULL;
 }
@@ -178,13 +286,57 @@ void destroyEntity(struct entity* e) {
 }
 
 void drawEntity(struct entity* e) {
-    int flags = 0;
-    if (e->velocity.x < 0)
-        flags |= ALLEGRO_FLIP_HORIZONTAL;
-    if (e->velocity.y < 0)
-        flags |= ALLEGRO_FLIP_VERTICAL;
-
-    al_draw_bitmap(e->entityAsset, e->position.x, e->position.y, flags);
+    double angle;
+    
+    // Check for undefined output
+    if (e->facing.x == 0 && e->facing.y == 0) {
+        angle = 0;
+    } else if (e->facing.x == 0) {
+        if (e->facing.y >= 0) {
+            angle = 1.5 * M_PI;
+        } else {
+            angle = - M_PI / 2;
+        }
+    } else if (e->facing.y == 0) {
+        if (e->facing.x >= 0) {
+            angle = 0;
+        } else {
+            angle = M_PI;
+        }
+    }
+    
+    // Check which quadrant it is being drawn in
+    else {
+        angle = atan(e->facing.y / e->facing.x);
+    
+        // atan has domain -pi/2 < atan < pi/2
+        // therefore the output may be offset
+        if (e->facing.x > 0) {
+            // +, +
+            if (e->facing.y > 0) {
+                angle = 2 * M_PI - angle;
+            }
+            // +, -
+            else {
+                angle *= -1;
+            }
+        } else {
+            // -, +
+            if (e->facing.y > 0) {
+                angle += 1.5 *  M_PI;
+            } 
+            // -, -
+            else {
+                angle += M_PI / 2;
+            }
+        }
+    }
+    
+    al_draw_rotated_bitmap(e->entityAsset, 
+                           e->dimensions.x / 2, e->dimensions.y / 2,
+                           e->position.x + e->dimensions.x / 2,
+                           e->position.y + e->dimensions.y / 2,
+                           angle, 0);
 }
 
 bool isCollidingWith(struct entity* a, struct entity* b) {
@@ -194,3 +346,25 @@ bool isCollidingWith(struct entity* a, struct entity* b) {
         && a->position.y + a->dimensions.y <= b->position.y + b->dimensions.y;
     return xMatch && yMatch;
 }
+
+bool isEnemy(struct entity* e) {
+    return e->type == ENEMY;
+}
+
+// TODO: Make this an advanced algorithm
+struct vect2 advancedAimingAlg(struct entity *tower, struct entity *target) {
+    struct vect2 center;
+    center.x = target->position.x + target->dimensions.x / 2;
+    center.y = target->position.y + target->dimensions.y / 2;
+    return normalise(minus(tower->position, center));
+}
+
+void initTower(struct entity* e) {    
+    e->type = TOWER;
+    e->dimensions.x = TOWER_SIZE;
+    e->dimensions.y = TOWER_SIZE;
+    struct towerEntityData *data = (struct towerEntityData *) malloc(sizeof(struct towerEntityData));
+    data->lastShotAt = 0;
+    e->entityData = data;    
+}
+

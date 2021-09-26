@@ -11,7 +11,22 @@
 #include "utils.h"
 #include "assets.h"
 
-__EXTERN__ASSET__DEFS__()
+__EXTERN__ASSET__DEFS__();
+
+void spawnEnemy(struct entities *ents) {
+    struct entity *enemy = addEntity(ents);
+    initEntity(enemy, ENEMY_1);
+    enemy->type = ENEMY;
+    enemy->health = 100;
+    enemy->velocity.x = rand() % 10;
+    enemy->velocity.y = rand() % 10;
+    
+    enemy->position.x = 1497;//abs(rand() % RES_X);
+    enemy->position.y = 1000;//abs(rand() % RES_Y);
+    
+    enemy->dimensions.x = ENEMY_SIZE;
+    enemy->dimensions.y = ENEMY_SIZE;
+}
 
 // This always runs headless and contextless
 int main() {
@@ -74,25 +89,23 @@ int main() {
     struct entities ents;
     initEntities(&ents);
 
-    /* // GENERATE RANDOM ENTITIES FOR TESTING
+    // GENERATE RANDOM ENTITIES FOR TESTING
     srand(time(NULL));
-
-    for (int i = 0; i < 100; i++) {
-        struct entity *mike = addEntity(&ents);
-        initEntity(mike, TEST);
-        mike->velocity.x = rand() % 10;
-        mike->velocity.y = rand() % 10;
-
-        mike->position.x = abs(rand() % RES_X);
-        mike->position.y = abs(rand() % RES_Y);
-
-        mike->dimensions.x = 100;
-        mike->dimensions.y = 100;
-    }*/
-
-    printf("Loading collision boxes...\n");
-    struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
-    printf("Loaded collision boxes.\n");
+    
+    struct entity *base = addEntity(&ents);
+    initEntity(base, PLAYER_BASE);
+    base->type = BASE;
+    base->health = 1000;
+    
+    base->position.x = BASE_X;
+    base->position.y = BASE_Y;
+    
+    base->dimensions.x = TOWER_SIZE;
+    base->dimensions.y = TOWER_SIZE;
+    
+    for (int i = 0; i < 10; i++) {
+        spawnEnemy(&ents);
+    }
 
     // Register event sources
     al_register_event_source(event_queue, al_get_display_event_source(display));
@@ -108,12 +121,18 @@ int main() {
 
     // Display a black screen
     al_clear_to_color(al_map_rgb(0, 0, 0));
+    al_draw_text(HACK_BOLD, al_map_rgb(255, 255, 255), 30, 30, 0, "LOADING...");
     al_flip_display();
+    
+    printf("Loading collision boxes...\n");
+    struct mapWalls *mapWalls = initMapWalls(IMG_BACKGROUND_COLLISIONS);
+    printf("Loaded collision boxes.\n");
 
     // Start the timer
     al_start_timer(timer);
 
     // Game loop
+    unsigned long frameCount = 0, last = 0;
     bool running = true;
     bool redraw = true;
     while (running) {
@@ -148,15 +167,15 @@ int main() {
                     towerSummonTmp.dimensions.x = TOWER_SIZE;
                     towerSummonTmp.dimensions.y = TOWER_SIZE;
 
-                    if (isFullyInWall(&towerSummonTmp, mapWalls)) {
+                    if (isFullyInWall(&towerSummonTmp, mapWalls) && state.compSocCoins >= TOWER_COST) {
                         clickSummon_real = addEntity(&ents);
-                        initEntity(clickSummon_real, TEST);
+                        initEntity(clickSummon_real, PLASMA_TOWER);
+                        initTower(clickSummon_real);
 
                         clickSummon_real->position.x = event.mouse.x;
                         clickSummon_real->position.y = event.mouse.y;
-
-                        clickSummon_real->dimensions.x = TOWER_SIZE;
-                        clickSummon_real->dimensions.y = TOWER_SIZE;
+                        
+                        state.compSocCoins -= TOWER_COST;
 
                         printf("Created a test tower entity.\n");
                     }
@@ -165,6 +184,11 @@ int main() {
                     break;
                 case ALLEGRO_EVENT_TIMER:
                     redraw = true;
+                    frameCount++;
+                    if (frameCount - last > 5000 / (frameCount * frameCount)) {
+                        spawnEnemy(&ents);
+                        last = frameCount;
+                    }
                     break;
                 case ALLEGRO_EVENT_DISPLAY_CLOSE:
                     running = false;
@@ -194,9 +218,6 @@ int main() {
             // Draw the background
             al_draw_bitmap(BACKGROUND, 0, 0, 0);
 
-            // Draw all entites
-            runEntityLogic(&ents, mapWalls);
-
             /* //DEBUG FOR TESTING COLLISION MAP
             for (int x = 0; x < RES_X; x++) {
                 for (int y = 0; y < RES_Y; y++) {
@@ -204,8 +225,13 @@ int main() {
                 }
             }*/
 
-            renderCoinage(&state);
-
+            
+            // Draw all entites
+            runEntityLogic(&ents, mapWalls, &state);
+            
+            // Display the UI overlay
+            renderUI(&state);
+          
             // flip display
             al_flip_display();
             redraw = false;

@@ -8,4 +8,4 @@ struct gameState {
 };
 
 void initGameState(struct gameState *state);
-void renderCoinage(struct gameState *state);
+void renderUI(struct gameState *state);

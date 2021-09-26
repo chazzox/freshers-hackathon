@@ -8,7 +8,6 @@
 #include "gamestate.h"
 
 #define COIN_RENDER_BUFF_SIZE 21
-#define COMP_SOC_COIN_WIDTH 248
 #define COIN_OFFSET 500
 #define COIN_Y 30
 #define TEXT_LEFT_MARGIN 100
@@ -19,7 +18,7 @@ void initGameState(struct gameState* state) {
     state->playerBaseHealth = 1000;
 }
 
-void renderCoinage(struct gameState *state) {
+void renderUI(struct gameState *state) {
     char buff[COIN_RENDER_BUFF_SIZE];
     snprintf(buff, COIN_RENDER_BUFF_SIZE * sizeof(char), "%06d", state->compSocCoins);
         
